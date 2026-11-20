@@ -22,7 +22,8 @@
     
     <!-- QRCode.js Library for Client-side QR Code Generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    
+    <!-- Supabase JS v2 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --primary: #4f46e5;
@@ -1570,7 +1571,147 @@
             document.getElementById('toast-text').innerText = message;
             toast.classList.add('active');
             setTimeout(() => toast.classList.remove('active'), 3500);
-        }
+        } 
+// --- SUPABASE MULTI-USER SETUP ---
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+const SUPABASE_PUBLISHABLE_KEY = 'YOUR_SUPABASE_PUBLISHABLE_KEY';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+let currentUser = null;
+let currentRole = 'member';
+
+async function signUp(email, password) {
+  const { data, error } = await sb.auth.signUp({ email, password });
+  if (error) throw error;
+  return data;
+}
+
+async function signIn(email, password) {
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) throw error;
+  return data;
+}
+
+async function signOut() {
+  const { error } = await sb.auth.signOut();
+  if (error) throw error;
+  currentUser = null;
+  currentRole = 'member';
+}
+
+async function initSession() {
+  const { data: { session }, error } = await sb.auth.getSession();
+  if (error) {
+    console.error('Session error:', error.message);
+    return null;
+  }
+  currentUser = session?.user ?? null;
+
+  if (currentUser) {
+    const { data: profile } = await sb
+      .from('profiles')
+      .select('role')
+      .eq('id', currentUser.id)
+      .single();
+    currentRole = profile?.role ?? 'member';
+  }
+  return currentUser;
+}
+
+function canModify(record) {
+  if (!currentUser || !record) return false;
+  return record.created_by === currentUser.id || currentRole === 'admin';
+}
+
+async function fetchSongs() {
+  const { data, error } = await sb
+    .from('songs')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return data;
+}
+
+async function addSong(song) {
+  const { data, error } = await sb
+    .from('songs')
+    .insert([{
+      title: song.title,
+      tamil_title: song.tamil_title || null,
+      default_key: song.default_key || null,
+      raagam_beat: song.raagam_beat || null,
+      lyrics_chords: song.lyrics_chords || null,
+      created_by: currentUser.id
+    }])
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+async function updateSong(id, updates) {
+  const { data, error } = await sb
+    .from('songs')
+    .update({ ...updates, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+async function deleteSong(id) {
+  const { error } = await sb
+    .from('songs')
+    .delete()
+    .eq('id', id);
+  if (error) throw error;
+}
+
+async function fetchSetlists() {
+  const { data, error } = await sb
+    .from('setlists')
+    .select('*')
+    .order('event_date', { ascending: true, nullsFirst: false });
+  if (error) throw error;
+  return data;
+}
+
+async function addSetlist(setlist) {
+  const { data, error } = await sb
+    .from('setlists')
+    .insert([{
+      name: setlist.name,
+      event_date: setlist.event_date || null,
+      notes: setlist.notes || null,
+      song_ids: setlist.song_ids || [],
+      created_by: currentUser.id
+    }])
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+async function updateSetlist(id, updates) {
+  const { data, error } = await sb
+    .from('setlists')
+    .update({ ...updates, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+async function deleteSetlist(id) {
+  const { error } = await sb
+    .from('setlists')
+    .delete()
+    .eq('id', id);
+  if (error) throw error;
+}
+
     </script>
 </body>
 </html>

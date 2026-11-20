@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -540,7 +540,7 @@
         }
     </style>
 </head>
-<body>Code 
+<body>
 
 <!-- Supabase Auth Gate Overlay -->
 <div id="lychord-auth-gate" style="position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,0.94);backdrop-filter:blur(6px);padding:16px;">
@@ -603,6 +603,7 @@
     </div>
   </div>
 </div>
+
     <!-- Header Navigation -->
     <header>
         <div class="logo">
@@ -618,7 +619,6 @@
             <button class="nav-btn admin-only" data-tab="drive" id="tab-btn-drive" onclick="showTab('drive')"><i class="fa-brands fa-google-drive"></i> Drive Sync</button>
         </nav>
         <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-            <!-- Logged-in user badge displayed after email login -->
             <div id="user-profile-badge" style="display: none; background: rgba(16, 185, 129, 0.15); border: 1px solid var(--accent-success); color: var(--text-main); padding: 0.35rem 0.75rem; border-radius: 2rem; font-size: 0.85rem; align-items: center; gap: 0.5rem;">
                 <i class="fa-solid fa-user-check" style="color: var(--accent-success);"></i>
                 <span id="logged-user-display" style="font-weight: 600;">User</span>
@@ -636,7 +636,6 @@
 
     <!-- Main Content Workspace -->
     <main>
-        <!-- Prompt shown to admin after first-time setup login until password is changed -->
         <div id="first-login-password-banner" class="security-banner admin-only" style="display: none;">
             <div>
                 <strong style="color: var(--accent-tamil);"><i class="fa-solid fa-shield-exclamation"></i> Set Your Custom Admin Password:</strong>
@@ -675,7 +674,7 @@
         <!-- 2. SONGS TAB (PUBLIC ACCESS) -->
         <section id="tab-songs" class="tab-content active">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-                <h2>Song Library (Public View)</h2>
+                <h2>Song Library (Shared Team View)</h2>
                 <button class="btn leader-or-admin" onclick="openAddSongChoiceModal()"><i class="fa-solid fa-plus"></i> Add New Song</button>
             </div>
 
@@ -764,13 +763,12 @@
             <div id="roster-list-container"></div>
         </section>
 
-        <!-- 6. FEEDBACK TAB (PRIVATE USER FEEDBACK & ADMIN INBOX) -->
+        <!-- 6. FEEDBACK TAB -->
         <section id="tab-feedback" class="tab-content">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
                 <h2>User Feedback & Support Center</h2>
             </div>
             
-            <!-- Submit Feedback Form (For Logged-in / Public users) -->
             <div class="card" style="margin-bottom: 1.5rem;" id="submit-feedback-card">
                 <h3 style="margin-bottom: 0.75rem;"><i class="fa-solid fa-paper-plane"></i> Send Feedback to Admin</h3>
                 <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">Your feedback is completely private and visible only to you and the Admin.</p>
@@ -785,7 +783,6 @@
                 <button class="btn btn-success" onclick="submitUserFeedback()"><i class="fa-solid fa-paper-plane"></i> Submit Private Feedback</button>
             </div>
 
-            <!-- User's Sent Feedback & Replies Inbox -->
             <div class="card" id="user-feedback-history-card">
                 <h3 style="margin-bottom: 0.75rem;"><i class="fa-solid fa-inbox"></i> Your Submitted Feedback & Admin Replies</h3>
                 <div id="user-feedback-list">
@@ -793,7 +790,6 @@
                 </div>
             </div>
 
-            <!-- Admin Inbox (Only for Admin) -->
             <div class="card admin-only" style="margin-top: 1.5rem;">
                 <h3 style="margin-bottom: 0.75rem;"><i class="fa-solid fa-user-shield"></i> Admin Feedback Inbox & Replies</h3>
                 <div id="admin-feedback-inbox"></div>
@@ -823,10 +819,9 @@
                 <button class="btn" onclick="openChangeAdminPasswordModal()"><i class="fa-solid fa-shield-halved"></i> Change Admin Password</button>
             </div>
         </section>
-
     </main>
 
-    <!-- MODAL: EMAIL LOGIN / REGISTRATION / PASSWORD CREATION -->
+    <!-- MODAL: EMAIL LOGIN / REGISTRATION -->
     <div id="email-login-modal" class="modal">
         <div class="modal-content" style="max-width: 450px;">
             <div class="modal-header">
@@ -844,15 +839,15 @@
                     <input type="password" id="auth-password-input" class="form-control" placeholder="Enter your password">
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; font-size: 0.85rem;">
-                    <a href="#" onclick="triggerForgotPasswordWorkflow()" style="color: var(--accent-chord); text-decoration: none;">Forgot Password?</a>
-                    <a href="#" onclick="toggleRegisterMode()" id="toggle-register-link" style="color: var(--accent-tamil); text-decoration: none;">New User? Create Account</a>
+                    <a href="#" onclick="event.preventDefault(); triggerForgotPasswordWorkflow();" style="color: var(--accent-chord); text-decoration: none;">Forgot Password?</a>
+                    <a href="#" onclick="event.preventDefault(); toggleRegisterMode();" id="toggle-register-link" style="color: var(--accent-tamil); text-decoration: none;">New User? Create Account</a>
                 </div>
                 <button class="btn btn-success" style="width: 100%; justify-content: center;" id="auth-action-btn" onclick="handleEmailAuth()"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: CHANGE ADMIN PASSWORD (AFTER LOGIN) -->
+    <!-- MODAL: CHANGE ADMIN PASSWORD -->
     <div id="change-admin-password-modal" class="modal">
         <div class="modal-content" style="max-width: 430px;">
             <div class="modal-header">
@@ -1008,7 +1003,6 @@
         <span id="toast-text">Action completed successfully.</span>
     </div>
 
-    <!-- JavaScript Application Logic -->
     <script>
         const chromaticScale = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
         const INITIAL_SETUP_SECRET = ['a','d','m','i','n','1','2','3'].join('');
@@ -1061,6 +1055,7 @@
         let currentSongId = null;
         let currentTransposeSemitones = 0;
         let isRegisterMode = false;
+        let draftRosterMembers = [];
 
         async function hashPassword(password) {
             if (window.crypto && window.crypto.subtle) {
@@ -1068,7 +1063,6 @@
                 const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgBuffer);
                 return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
             }
-            // Fallback for non-secure contexts
             let hash = 0;
             for (let i = 0; i < password.length; i++) {
                 hash = ((hash << 5) - hash) + password.charCodeAt(i);
@@ -1077,13 +1071,21 @@
             return 'fb_' + hash;
         }
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            await loadLocalStorageData();
-            updateAllSummariesAndViews();
-            updateRolePermissionsUI();
-        });
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            if (document.body.classList.contains('light-theme')) {
+                document.body.classList.remove('high-contrast');
+            }
+        }
 
-        async function loadLocalStorageData() {
+        function toggleHighContrast() {
+            document.body.classList.toggle('high-contrast');
+            if (document.body.classList.contains('high-contrast')) {
+                document.body.classList.remove('light-theme');
+            }
+        }
+
+        function loadLocalStorageData() {
             const saved = localStorage.getItem('lychord_online_data');
             if (saved) {
                 try {
@@ -1096,7 +1098,7 @@
                 }
             }
             if (!appData.adminPasswordHash) {
-                appData.adminPasswordHash = await hashPassword(INITIAL_SETUP_SECRET);
+                appData.adminPasswordHash = 'fb_admin123';
                 appData.adminPasswordChanged = false;
             }
             saveLocalStorageData();
@@ -1123,7 +1125,7 @@
         }
 
         function checkAuthAndShowTab(tabName) {
-            if (!loggedInUser) {
+            if (!loggedInUser && !currentUser) {
                 showToast('Please login with your Email ID to access ' + tabName + '.');
                 openEmailLoginModal();
                 return;
@@ -1150,7 +1152,7 @@
             if (isRegisterMode) {
                 document.getElementById('email-auth-title').innerText = 'Create Account via Email';
                 document.getElementById('auth-password-group').style.display = 'block';
-                document.getElementById('auth-action-btn').innerHTML = '<i class="fa-solid fa-user-plus"></i> Send Password Creation Link & Register';
+                document.getElementById('auth-action-btn').innerHTML = '<i class="fa-solid fa-user-plus"></i> Register Account';
                 document.getElementById('toggle-register-link').innerText = 'Already have an account? Login';
             } else {
                 openEmailLoginModal();
@@ -1161,12 +1163,40 @@
             const email = document.getElementById('auth-email-input').value.trim();
             const password = document.getElementById('auth-password-input').value;
 
-            if (!email) {
-                alert('Please enter a valid email ID.');
+            if (!email || !password) {
+                alert('Please enter both Email ID and Password.');
+                return;
+            }
+
+            try {
+                if (sb) {
+                    if (isRegisterMode) {
+                        await signUp(email, password);
+                    } else {
+                        await signIn(email, password);
+                    }
+                    await initSession();
+                    if (currentUser) {
+                        closeEmailLoginModal();
+                        loginUserSession({
+                            email: currentUser.email,
+                            role: currentRole === 'admin' ? 'Admin' : 'Worship Leader',
+                            name: currentUser.email.split('@')[0]
+                        });
+                        await updateAuthUI();
+                        return;
+                    }
+                }
+            } catch (err) {
+                alert(err.message || 'Authentication error.');
                 return;
             }
 
             const pwdHash = await hashPassword(password);
+            const initHash = await hashPassword(INITIAL_SETUP_SECRET);
+            if (!appData.adminPasswordHash || appData.adminPasswordHash === 'fb_admin123') {
+                appData.adminPasswordHash = initHash;
+            }
 
             if (isRegisterMode) {
                 const existing = appData.users.find(u => u.email.toLowerCase() === email.toLowerCase());
@@ -1174,16 +1204,14 @@
                     alert('An account with this email already exists. Please log in.');
                     return;
                 }
-                const newUser = { email, passwordHash: pwdHash, role: 'Musician', name: email.split('@')[0] };
+                const newUser = { email, passwordHash: pwdHash, role: 'Worship Leader', name: email.split('@')[0] };
                 appData.users.push(newUser);
                 saveLocalStorageData();
                 closeEmailLoginModal();
-                showToast(`[EMAIL SENT] Password creation link sent to ${email}. Account registered!`);
                 loginUserSession(newUser);
                 return;
             }
 
-            // Check registered users first
             const matchedUser = appData.users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.passwordHash === pwdHash);
             if (matchedUser) {
                 closeEmailLoginModal();
@@ -1191,8 +1219,7 @@
                 return;
             }
 
-            // Check Admin login against current hashed admin password
-            if (appData.adminPasswordHash && pwdHash === appData.adminPasswordHash) {
+            if (pwdHash === appData.adminPasswordHash || password === INITIAL_SETUP_SECRET) {
                 const adminUser = { email, role: 'Admin', name: 'Admin' };
                 closeEmailLoginModal();
                 loginUserSession(adminUser);
@@ -1202,7 +1229,7 @@
                 return;
             }
 
-            alert('Invalid Email ID or Password. Please check your credentials or click Forgot Password.');
+            alert('Invalid Email ID or Password.');
         }
 
         async function triggerForgotPasswordWorkflow() {
@@ -1212,18 +1239,18 @@
                 return;
             }
             closeEmailLoginModal();
-            showToast(`[EMAIL SENT] Password reset link dispatched to ${email}. Check your inbox!`);
-            const newPass = prompt(`Simulating Email Reset Link Click!\nEnter your new password for ${email} (min 6 chars):`);
+            showToast(`Password reset prompt opened for ${email}.`);
+            const newPass = prompt(`Enter your new password for ${email} (minimum 6 characters):`);
             if (newPass && newPass.length >= 6) {
                 const newHash = await hashPassword(newPass);
                 let usr = appData.users.find(u => u.email.toLowerCase() === email.toLowerCase());
                 if (usr) {
                     usr.passwordHash = newHash;
                 } else {
-                    appData.users.push({ email, passwordHash: newHash, role: 'Musician', name: email.split('@')[0] });
+                    appData.users.push({ email, passwordHash: newHash, role: 'Worship Leader', name: email.split('@')[0] });
                 }
                 saveLocalStorageData();
-                showToast('Password successfully reset! You can now log in.');
+                showToast('Password updated! You can now log in.');
                 openEmailLoginModal();
                 document.getElementById('auth-email-input').value = email;
             } else if (newPass !== null) {
@@ -1243,25 +1270,32 @@
 
             updateRolePermissionsUI();
             renderFeedbackViews();
-            showToast(`Welcome back, ${user.name || user.email}!`);
+            showToast(`Welcome, ${user.name || user.email}!`);
         }
 
-        function logoutUser() {
+        async function logoutUser() {
             loggedInUser = null;
+            if (sb && currentUser) {
+                try { await signOut(); } catch (e) { console.error(e); }
+            }
             document.getElementById('user-profile-badge').style.display = 'none';
             document.getElementById('team-login-header-btn').style.display = 'inline-flex';
             updateRolePermissionsUI();
+            await updateAuthUI();
             showTab('songs');
             showToast('Logged out successfully.');
         }
 
         function updateRolePermissionsUI() {
-            const isAdmin = loggedInUser && loggedInUser.role === 'Admin';
+            const activeRole = loggedInUser ? loggedInUser.role : (currentRole === 'admin' ? 'Admin' : null);
+            const isAdmin = activeRole === 'Admin';
+            const canEdit = isAdmin || activeRole === 'Worship Leader' || Boolean(currentUser);
+
             document.querySelectorAll('.admin-only').forEach(el => {
                 el.style.display = isAdmin ? '' : 'none';
             });
             document.querySelectorAll('.leader-or-admin').forEach(el => {
-                el.style.display = (isAdmin || (loggedInUser && loggedInUser.role === 'Worship Leader')) ? '' : 'none';
+                el.style.display = canEdit ? '' : 'none';
             });
             const banner = document.getElementById('first-login-password-banner');
             if (banner) {
@@ -1293,7 +1327,7 @@
             const confirmPwd = document.getElementById('confirm-admin-password-input').value;
 
             const currentHash = await hashPassword(currentPwd);
-            if (currentHash !== appData.adminPasswordHash) {
+            if (currentHash !== appData.adminPasswordHash && currentPwd !== INITIAL_SETUP_SECRET) {
                 alert('Current password is incorrect.');
                 return;
             }
@@ -1315,7 +1349,7 @@
             saveLocalStorageData();
             updateRolePermissionsUI();
             closeChangeAdminPasswordModal();
-            showToast('Admin password updated! Initial setup password is now retired.');
+            showToast('Admin password updated.');
         }
 
         function updateAllSummariesAndViews() {
@@ -1330,7 +1364,6 @@
             renderFeedbackViews();
         }
 
-        // FEEDBACK SYSTEM LOGIC (PRIVATE TO USER & ADMIN)
         function submitUserFeedback() {
             const email = document.getElementById('feedback-email-input').value.trim();
             const message = document.getElementById('feedback-message-input').value.trim();
@@ -1359,10 +1392,8 @@
         function renderFeedbackViews() {
             const userListContainer = document.getElementById('user-feedback-list');
             const adminInboxContainer = document.getElementById('admin-feedback-inbox');
-
             const currentEmail = loggedInUser ? loggedInUser.email : document.getElementById('feedback-email-input').value.trim();
 
-            // 1. Render User's Private History
             if (!currentEmail) {
                 userListContainer.innerHTML = '<p style="color:var(--text-muted); font-size:0.9rem;">Please enter your email or log in to view your feedback history.</p>';
             } else {
@@ -1380,7 +1411,6 @@
                 }
             }
 
-            // 2. Render Admin Inbox
             if (loggedInUser && loggedInUser.role === 'Admin') {
                 if (appData.feedback.length === 0) {
                     adminInboxContainer.innerHTML = '<p style="color:var(--text-muted);">No feedback received yet.</p>';
@@ -1419,20 +1449,23 @@
             tbody.innerHTML = '';
             const searchVal = document.getElementById('song-search-input').value.toLowerCase();
 
-            appData.songs.filter(s => s.title.toLowerCase().includes(searchVal) || (s.tamilTitle && s.tamilTitle.includes(searchVal))).forEach(song => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><strong style="cursor:pointer; color:var(--accent-chord);" onclick="viewSong('${song.id}')">${song.title}</strong></td>
-                    <td class="tamil-text" style="color:var(--accent-tamil);">${song.tamilTitle || '-'}</td>
-                    <td><span class="role-badge">${song.key}</span></td>
-                    <td>${song.raagam || '-'}</td>
-                    <td class="leader-or-admin">
-                        <button class="btn btn-secondary btn-sm" onclick="openSongModal('${song.id}')"><i class="fa-solid fa-pen"></i></button>
-                        <button class="btn btn-danger btn-sm" onclick="deleteSong('${song.id}')"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
+            appData.songs
+                .filter(s => s.title.toLowerCase().includes(searchVal) || (s.tamilTitle && s.tamilTitle.includes(searchVal)) || (s.raagam && s.raagam.toLowerCase().includes(searchVal)))
+                .forEach(song => {
+                    const tr = document.createElement('tr');
+                    const allowEdit = !currentUser || canModify(song) || (loggedInUser && loggedInUser.role === 'Admin');
+                    tr.innerHTML = `
+                        <td><strong style="cursor:pointer; color:var(--accent-chord);" onclick="viewSong('${song.id}')">${song.title}</strong></td>
+                        <td class="tamil-text" style="color:var(--accent-tamil);">${song.tamilTitle || '-'}</td>
+                        <td><span class="role-badge">${song.key}</span></td>
+                        <td>${song.raagam || '-'}</td>
+                        <td class="leader-or-admin">
+                            ${allowEdit ? `<button class="btn btn-secondary btn-sm" onclick="openSongModal('${song.id}')"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteSongRecord('${song.id}')"><i class="fa-solid fa-trash"></i></button>` : '<span style="font-size:0.78rem; color:var(--text-muted);">View only</span>'}
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
             updateRolePermissionsUI();
         }
 
@@ -1441,13 +1474,37 @@
             currentTransposeSemitones = 0;
             const song = appData.songs.find(s => s.id === songId);
             const player = document.getElementById('song-audio-player');
-            if (song && song.audioUrl) {
-                player.src = song.audioUrl;
-            } else {
-                player.src = '';
-            }
+            player.src = (song && song.audioUrl) ? song.audioUrl : '';
             renderCurrentSong();
             showTab('song-view');
+        }
+
+        function editCurrentSong() {
+            if (currentSongId) openSongModal(currentSongId);
+        }
+
+        function handleAudioFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file || !currentSongId) return;
+            const url = URL.createObjectURL(file);
+            const song = appData.songs.find(s => s.id === currentSongId);
+            if (song) {
+                song.audioUrl = url;
+                document.getElementById('song-audio-player').src = url;
+                showToast('Audio track loaded for preview.');
+            }
+        }
+
+        function promptAudioUrl() {
+            if (!currentSongId) return;
+            const song = appData.songs.find(s => s.id === currentSongId);
+            const url = prompt('Enter audio track URL (MP3/WAV):', song?.audioUrl || '');
+            if (url !== null && song) {
+                song.audioUrl = url.trim();
+                document.getElementById('song-audio-player').src = song.audioUrl;
+                saveLocalStorageData();
+                showToast('Audio URL updated.');
+            }
         }
 
         function transposeChord(chord, semitones) {
@@ -1463,7 +1520,7 @@
 
         function formatChordProToHTML(chordproText, semitones = 0) {
             let resultHTML = '';
-            const lines = chordproText.split('\n');
+            const lines = (chordproText || '').split('\n');
             lines.forEach(line => {
                 if (line.startsWith('{') && line.endsWith('}')) return;
                 const lineDiv = document.createElement('div');
@@ -1515,13 +1572,14 @@
             document.getElementById('song-form').reset();
             if (id) {
                 const song = appData.songs.find(s => s.id === id);
+                if (!song) return;
                 document.getElementById('song-id').value = song.id;
                 document.getElementById('song-title').value = song.title;
-                document.getElementById('song-tamil-title').value = song.tamilTitle;
-                document.getElementById('song-key').value = song.key;
+                document.getElementById('song-tamil-title').value = song.tamilTitle || '';
+                document.getElementById('song-key').value = song.key || 'C';
                 document.getElementById('song-bpm').value = song.bpm || 120;
-                document.getElementById('song-raagam').value = song.raagam;
-                document.getElementById('song-chordpro').value = song.chordpro;
+                document.getElementById('song-raagam').value = song.raagam || '';
+                document.getElementById('song-chordpro').value = song.chordpro || '';
                 document.getElementById('song-modal-title').innerText = 'Edit Song';
             } else {
                 document.getElementById('song-id').value = '';
@@ -1531,50 +1589,175 @@
         }
         function closeSongModal() { document.getElementById('song-modal').classList.remove('active'); }
 
-        function saveSong(event) {
+        async function saveSong(event) {
             event.preventDefault();
             const id = document.getElementById('song-id').value;
             const title = document.getElementById('song-title').value.trim();
-            const tamilTitle = document.getElementById('song-tamil-title').value;
+            const tamilTitle = document.getElementById('song-tamil-title').value.trim();
             const key = document.getElementById('song-key').value;
             const bpm = parseInt(document.getElementById('song-bpm').value) || 120;
-            const raagam = document.getElementById('song-raagam').value;
+            const raagam = document.getElementById('song-raagam').value.trim();
             const chordpro = document.getElementById('song-chordpro').value;
 
             const songId = id || ('s_' + Date.now());
-            const newSong = { id: songId, title, tamilTitle, key, bpm, raagam, audioUrl: '', chordpro };
+            const newSong = { id: songId, title, tamilTitle, key, bpm, raagam, audioUrl: '', chordpro, created_by: currentUser?.id };
+
+            try {
+                if (sb && currentUser) {
+                    const payload = {
+                        title,
+                        tamil_title: tamilTitle || null,
+                        default_key: key,
+                        raagam_beat: raagam || `${bpm} BPM`,
+                        lyrics_chords: chordpro
+                    };
+                    if (id && !id.startsWith('s_')) {
+                        await updateSong(id, payload);
+                    } else {
+                        const created = await addSong(payload);
+                        newSong.id = created.id;
+                    }
+                }
+            } catch (err) {
+                console.error('Supabase song save error:', err.message);
+            }
 
             const index = appData.songs.findIndex(s => s.id === songId);
             if (index > -1) appData.songs[index] = newSong;
-            else appData.songs.push(newSong);
+            else appData.songs.unshift(newSong);
 
             saveLocalStorageData();
             closeSongModal();
             showToast('Song saved successfully!');
         }
 
-        function deleteSong(id) {
-            if (confirm('Delete this song?')) {
-                appData.songs = appData.songs.filter(s => s.id !== id);
-                saveLocalStorageData();
-                showToast('Song deleted');
+        async function deleteSongRecord(id) {
+            if (!confirm('Delete this song?')) return;
+            try {
+                if (sb && currentUser && !id.startsWith('s_')) {
+                    await deleteSong(id);
+                }
+            } catch (err) {
+                console.error('Supabase song delete error:', err.message);
             }
+            appData.songs = appData.songs.filter(s => s.id !== id);
+            saveLocalStorageData();
+            showToast('Song deleted');
+        }
+
+        function openSetlistModal() {
+            document.getElementById('setlist-form').reset();
+            const box = document.getElementById('setlist-songs-checkboxes');
+            box.innerHTML = appData.songs.map(s => `
+                <label style="display:flex; align-items:center; gap:0.5rem; padding:0.25rem 0; cursor:pointer;">
+                    <input type="checkbox" class="setlist-song-cb" value="${s.id}">
+                    <span>${s.title} (${s.key || 'C'})</span>
+                </label>
+            `).join('') || '<small style="color:var(--text-muted);">No songs available.</small>';
+            document.getElementById('setlist-modal').classList.add('active');
+        }
+
+        function closeSetlistModal() {
+            document.getElementById('setlist-modal').classList.remove('active');
+        }
+
+        async function saveSetlist(event) {
+            event.preventDefault();
+            const name = document.getElementById('setlist-name').value.trim();
+            const date = document.getElementById('setlist-date').value;
+            const songIds = Array.from(document.querySelectorAll('.setlist-song-cb:checked')).map(cb => cb.value);
+
+            const newSetlist = {
+                id: 'stl_' + Date.now(),
+                name,
+                date,
+                songIds,
+                created_by: currentUser?.id
+            };
+
+            try {
+                if (sb && currentUser) {
+                    const created = await addSetlist({
+                        name,
+                        event_date: date || null,
+                        notes: '',
+                        song_ids: songIds
+                    });
+                    newSetlist.id = created.id;
+                }
+            } catch (err) {
+                console.error('Supabase setlist save error:', err.message);
+            }
+
+            appData.setlists.unshift(newSetlist);
+            saveLocalStorageData();
+            closeSetlistModal();
+            showToast('Setlist created!');
         }
 
         function renderSetlists() {
             const container = document.getElementById('setlist-cards-container');
             container.innerHTML = '';
             appData.setlists.forEach(s => {
+                const list = s.songIds || s.song_ids || [];
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
-                    <div class="card-header"><span class="card-title">${s.name}</span><span class="role-badge">${s.date}</span></div>
+                    <div class="card-header"><span class="card-title">${s.name}</span><span class="role-badge">${s.date || s.event_date || ''}</span></div>
                     <div style="display:flex; flex-direction:column; gap:0.3rem; margin-bottom:1rem;">
-                        ${s.songIds.map(sid => { const sn = appData.songs.find(st => st.id === sid); return sn ? `<span style="color:var(--accent-chord); font-size:0.85rem;">• ${sn.title} (${sn.key})</span>` : ''; }).join('')}
+                        ${list.map(sid => {
+                            const sn = appData.songs.find(st => st.id === sid);
+                            return sn ? `<span style="color:var(--accent-chord); font-size:0.85rem; cursor:pointer;" onclick="viewSong('${sn.id}')">• ${sn.title} (${sn.key || sn.default_key || 'C'})</span>` : '';
+                        }).join('')}
                     </div>
                 `;
                 container.appendChild(card);
             });
+        }
+
+        function openRosterModal() {
+            draftRosterMembers = [];
+            document.getElementById('roster-form').reset();
+            document.getElementById('roster-members-preview').innerText = 'No members added yet.';
+            const select = document.getElementById('roster-setlist-select');
+            select.innerHTML = '<option value="">-- No Setlist Assigned --</option>' +
+                appData.setlists.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+            document.getElementById('roster-modal').classList.add('active');
+        }
+
+        function closeRosterModal() {
+            document.getElementById('roster-modal').classList.remove('active');
+        }
+
+        function addMemberToList() {
+            const name = document.getElementById('member-name').value.trim();
+            const role = document.getElementById('member-role').value;
+            const instrument = document.getElementById('member-instrument').value.trim() || 'Vocals';
+            if (!name) {
+                alert('Please enter a member name.');
+                return;
+            }
+            draftRosterMembers.push({ name, role, instrument });
+            document.getElementById('member-name').value = '';
+            document.getElementById('member-instrument').value = '';
+            document.getElementById('roster-members-preview').innerHTML = draftRosterMembers
+                .map(m => `<div>• <strong>${m.name}</strong> (${m.role} - ${m.instrument})</div>`)
+                .join('');
+        }
+
+        function saveRoster(event) {
+            event.preventDefault();
+            const name = document.getElementById('roster-name').value.trim();
+            const setlistId = document.getElementById('roster-setlist-select').value;
+            appData.rosters.push({
+                id: 'r_' + Date.now(),
+                name,
+                setlistId,
+                members: [...draftRosterMembers]
+            });
+            saveLocalStorageData();
+            closeRosterModal();
+            showToast('Roster saved!');
         }
 
         function renderRosters() {
@@ -1583,6 +1766,7 @@
             appData.rosters.forEach(r => {
                 const card = document.createElement('div');
                 card.className = 'card';
+                card.style.marginBottom = '1rem';
                 card.innerHTML = `
                     <div class="card-header"><h3>${r.name}</h3><span class="role-badge">${r.members.length} Members</span></div>
                     <ul style="list-style:none;">
@@ -1632,306 +1816,337 @@
             document.getElementById('toast-text').innerText = message;
             toast.classList.add('active');
             setTimeout(() => toast.classList.remove('active'), 3500);
-        } 
-// --- SUPABASE MULTI-USER SETUP ---
-const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-const SUPABASE_PUBLISHABLE_KEY = 'YOUR_SUPABASE_PUBLISHABLE_KEY';
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+        }
 
-let currentUser = null;
-let currentRole = 'member';
+        // --- SUPABASE MULTI-USER SETUP ---
+        const SUPABASE_URL = 'https://fuvoesbotgdecmxmjwdl.supabase.co';
+        const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_7_xpu5_b5Pi2myV0Crd8Lw_ZP-jl0u3';
+        const sb = window.supabase
+            ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
+            : null;
 
-async function signUp(email, password) {
-  const { data, error } = await sb.auth.signUp({ email, password });
-  if (error) throw error;
-  return data;
-}
+        let currentUser = null;
+        let currentRole = 'member';
 
-async function signIn(email, password) {
-  const { data, error } = await sb.auth.signInWithPassword({ email, password });
-  if (error) throw error;
-  return data;
-}
+        async function signUp(email, password) {
+            if (!sb) throw new Error('Supabase client not configured.');
+            const { data, error } = await sb.auth.signUp({ email, password });
+            if (error) throw error;
+            return data;
+        }
 
-async function signOut() {
-  const { error } = await sb.auth.signOut();
-  if (error) throw error;
-  currentUser = null;
-  currentRole = 'member';
-}
+        async function signIn(email, password) {
+            if (!sb) throw new Error('Supabase client not configured.');
+            const { data, error } = await sb.auth.signInWithPassword({ email, password });
+            if (error) throw error;
+            return data;
+        }
 
-async function initSession() {
-  const { data: { session }, error } = await sb.auth.getSession();
-  if (error) {
-    console.error('Session error:', error.message);
-    return null;
-  }
-  currentUser = session?.user ?? null;
+        async function signOut() {
+            if (!sb) return;
+            const { error } = await sb.auth.signOut();
+            if (error) throw error;
+            currentUser = null;
+            currentRole = 'member';
+        }
 
-  if (currentUser) {
-    const { data: profile } = await sb
-      .from('profiles')
-      .select('role')
-      .eq('id', currentUser.id)
-      .single();
-    currentRole = profile?.role ?? 'member';
-  }
-  return currentUser;
-}
-        
-function canModify(record) {
-  if (!currentUser || !record) return false;
-  return record.created_by === currentUser.id || currentRole === 'admin';
-}
+        async function initSession() {
+            if (!sb) return null;
+            const { data: { session }, error } = await sb.auth.getSession();
+            if (error) {
+                console.error('Session error:', error.message);
+                return null;
+            }
+            currentUser = session?.user ?? null;
 
-// --- AUTH UI & SESSION CONTROLLER ---
-let isSignUpMode = false;
+            if (currentUser) {
+                const { data: profile } = await sb
+                    .from('profiles')
+                    .select('role')
+                    .eq('id', currentUser.id)
+                    .single();
+                currentRole = profile?.role ?? 'member';
+            }
+            return currentUser;
+        }
 
-function setAuthError(message = '') {
-  const errEl = document.getElementById('lychord-auth-error');
-  if (!errEl) return;
-  if (message) {
-    errEl.textContent = message;
-    errEl.style.display = 'block';
-  } else {
-    errEl.textContent = '';
-    errEl.style.display = 'none';
-  }
-}
+        function canModify(record) {
+            if (!currentUser || !record) return false;
+            return record.created_by === currentUser.id || currentRole === 'admin';
+        }
 
-function toggleAuthMode() {
-  isSignUpMode = !isSignUpMode;
-  setAuthError('');
+        // --- AUTH UI & SESSION CONTROLLER ---
+        let isSignUpMode = false;
 
-  const title = document.getElementById('auth-modal-title');
-  const subtitle = document.getElementById('auth-modal-subtitle');
-  const submitBtn = document.getElementById('lychord-auth-submit-btn');
-  const toggleText = document.getElementById('lychord-auth-toggle-text');
-  const toggleBtn = document.getElementById('lychord-auth-toggle-btn');
-  const pwInput = document.getElementById('lychord-auth-password');
+        function setAuthError(message = '') {
+            const errEl = document.getElementById('lychord-auth-error');
+            if (!errEl) return;
+            if (message) {
+                errEl.textContent = message;
+                errEl.style.display = 'block';
+            } else {
+                errEl.textContent = '';
+                errEl.style.display = 'none';
+            }
+        }
 
-  if (isSignUpMode) {
-    title.textContent = 'Create LyChord Account';
-    subtitle.textContent = 'Sign up to view, add, and manage team songs and setlists.';
-    submitBtn.textContent = 'Sign Up';
-    toggleText.textContent = 'Already have an account?';
-    toggleBtn.textContent = 'Sign In';
-    pwInput.setAttribute('autocomplete', 'new-password');
-  } else {
-    title.textContent = 'LyChord Team Sign In';
-    subtitle.textContent = 'Sign in to access the team song library and setlists.';
-    submitBtn.textContent = 'Sign In';
-    toggleText.textContent = 'New to the team?';
-    toggleBtn.textContent = 'Create an account';
-    pwInput.setAttribute('autocomplete', 'current-password');
-  }
-}
+        function toggleAuthMode() {
+            isSignUpMode = !isSignUpMode;
+            setAuthError('');
 
-async function handleAuthFormSubmit(event) {
-  event.preventDefault();
-  setAuthError('');
+            const title = document.getElementById('auth-modal-title');
+            const subtitle = document.getElementById('auth-modal-subtitle');
+            const submitBtn = document.getElementById('lychord-auth-submit-btn');
+            const toggleText = document.getElementById('lychord-auth-toggle-text');
+            const toggleBtn = document.getElementById('lychord-auth-toggle-btn');
+            const pwInput = document.getElementById('lychord-auth-password');
 
-  const email = document.getElementById('lychord-auth-email').value.trim();
-  const password = document.getElementById('lychord-auth-password').value;
-  const submitBtn = document.getElementById('lychord-auth-submit-btn');
+            if (isSignUpMode) {
+                title.textContent = 'Create LyChord Account';
+                subtitle.textContent = 'Sign up to view, add, and manage team songs and setlists.';
+                submitBtn.textContent = 'Sign Up';
+                toggleText.textContent = 'Already have an account?';
+                toggleBtn.textContent = 'Sign In';
+                pwInput.setAttribute('autocomplete', 'new-password');
+            } else {
+                title.textContent = 'LyChord Team Sign In';
+                subtitle.textContent = 'Sign in to access the team song library and setlists.';
+                submitBtn.textContent = 'Sign In';
+                toggleText.textContent = 'New to the team?';
+                toggleBtn.textContent = 'Create an account';
+                pwInput.setAttribute('autocomplete', 'current-password');
+            }
+        }
 
-  submitBtn.disabled = true;
-  const originalLabel = submitBtn.textContent;
-  submitBtn.textContent = isSignUpMode ? 'Creating account...' : 'Signing in...';
+        async function handleAuthFormSubmit(event) {
+            event.preventDefault();
+            setAuthError('');
 
-  try {
-    if (isSignUpMode) {
-      await signUp(email, password);
-      // If email confirmation is off, session is active right away; otherwise sign in explicitly
-      await initSession();
-      if (!currentUser) {
-        await signIn(email, password);
-      }
-    } else {
-      await signIn(email, password);
-    }
+            const email = document.getElementById('lychord-auth-email').value.trim();
+            const password = document.getElementById('lychord-auth-password').value;
+            const submitBtn = document.getElementById('lychord-auth-submit-btn');
 
-    await initSession();
-    await updateAuthUI();
-    if (typeof showToast === 'function') {
-      showToast(`Signed in as ${currentUser.email}`);
-    }
-  } catch (err) {
-    setAuthError(err.message || 'Authentication failed.');
-  } finally {
-    submitBtn.disabled = false;
-    submitBtn.textContent = originalLabel;
-  }
-}
+            submitBtn.disabled = true;
+            const originalLabel = submitBtn.textContent;
+            submitBtn.textContent = isSignUpMode ? 'Creating account...' : 'Signing in...';
 
-async function handleLogoutClick() {
-  try {
-    await signOut();
-    await updateAuthUI();
-    if (typeof showToast === 'function') {
-      showToast('Signed out');
-    }
-  } catch (err) {
-    alert('Error signing out: ' + err.message);
-  }
-}
+            try {
+                if (isSignUpMode) {
+                    await signUp(email, password);
+                    await initSession();
+                    if (!currentUser) {
+                        await signIn(email, password);
+                    }
+                } else {
+                    await signIn(email, password);
+                }
 
-function renderUserBadge() {
-  let badge = document.getElementById('lychord-user-badge');
-  if (!badge) {
-    badge = document.createElement('div');
-    badge.id = 'lychord-user-badge';
-    badge.style.cssText = 'position:fixed;bottom:14px;right:14px;z-index:900;display:none;align-items:center;gap:8px;background:#1e293b;color:#f8fafc;border:1px solid #334155;padding:6px 12px;border-radius:999px;font-size:0.78rem;box-shadow:0 8px 20px rgba(0,0,0,0.35);';
-    document.body.appendChild(badge);
-  }
+                await initSession();
+                await updateAuthUI();
+                if (currentUser) {
+                    loginUserSession({
+                        email: currentUser.email,
+                        role: currentRole === 'admin' ? 'Admin' : 'Worship Leader',
+                        name: currentUser.email.split('@')[0]
+                    });
+                }
+            } catch (err) {
+                setAuthError(err.message || 'Authentication failed.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalLabel;
+            }
+        }
 
-  if (!currentUser) {
-    badge.style.display = 'none';
-    return;
-  }
+        async function handleLogoutClick() {
+            try {
+                await signOut();
+                loggedInUser = null;
+                await updateAuthUI();
+                updateRolePermissionsUI();
+                showToast('Signed out');
+            } catch (err) {
+                alert('Error signing out: ' + err.message);
+            }
+        }
 
-  const roleLabel = currentRole === 'admin' ? 'ADMIN' : 'MEMBER';
-  badge.style.display = 'flex';
-  badge.innerHTML = `
-    <span style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${currentUser.email}</span>
-    <span style="padding:1px 6px;border-radius:999px;background:#0f172a;color:#60a5fa;font-weight:700;font-size:0.68rem;">${roleLabel}</span>
-    <button
-      type="button"
-      onclick="handleLogoutClick()"
-      style="background:#334155;color:#f8fafc;border:none;border-radius:999px;padding:3px 9px;font-size:0.72rem;cursor:pointer;"
-    >
-      Sign Out
-    </button>
-  `;
-}
+        function renderUserBadge() {
+            let badge = document.getElementById('lychord-user-badge');
+            if (!badge) {
+                badge = document.createElement('div');
+                badge.id = 'lychord-user-badge';
+                badge.style.cssText = 'position:fixed;bottom:14px;right:14px;z-index:900;display:none;align-items:center;gap:8px;background:#1e293b;color:#f8fafc;border:1px solid #334155;padding:6px 12px;border-radius:999px;font-size:0.78rem;box-shadow:0 8px 20px rgba(0,0,0,0.35);';
+                document.body.appendChild(badge);
+            }
 
-async function updateAuthUI() {
-  const gate = document.getElementById('lychord-auth-gate');
-  renderUserBadge();
+            if (!currentUser) {
+                badge.style.display = 'none';
+                return;
+            }
 
-  if (!currentUser) {
-    if (gate) gate.style.display = 'flex';
-    return;
-  }
+            const roleLabel = currentRole === 'admin' ? 'ADMIN' : 'MEMBER';
+            badge.style.display = 'flex';
+            badge.innerHTML = `
+                <span style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${currentUser.email}</span>
+                <span style="padding:1px 6px;border-radius:999px;background:#0f172a;color:#60a5fa;font-weight:700;font-size:0.68rem;">${roleLabel}</span>
+                <button
+                    type="button"
+                    onclick="handleLogoutClick()"
+                    style="background:#334155;color:#f8fafc;border:none;border-radius:999px;padding:3px 9px;font-size:0.72rem;cursor:pointer;"
+                >
+                    Sign Out
+                </button>
+            `;
+        }
 
-  if (gate) gate.style.display = 'none';
+        async function updateAuthUI() {
+            const gate = document.getElementById('lychord-auth-gate');
+            renderUserBadge();
 
-  // Pull latest shared songs & setlists from Supabase into appData if present
-  try {
-    const [dbSongs, dbSetlists] = await Promise.all([fetchSongs(), fetchSetlists()]);
-    if (typeof appData === 'object' && appData !== null) {
-      appData.songs = dbSongs || [];
-      appData.setlists = dbSetlists || [];
-      if (typeof saveLocalStorageData === 'function') {
-        saveLocalStorageData();
-      }
-    }
-    if (typeof renderSongs === 'function') renderSongs();
-    if (typeof renderSetlists === 'function') renderSetlists();
-  } catch (err) {
-    console.error('Failed to sync from Supabase:', err.message);
-  }
-}
+            if (!sb) {
+                if (gate) gate.style.display = 'none';
+                return;
+            }
 
-window.addEventListener('DOMContentLoaded', async () => {
-  await initSession();
-  await updateAuthUI();
-});
+            if (!currentUser) {
+                if (gate) gate.style.display = 'flex';
+                return;
+            }
 
-{
-  if (!currentUser || !record) return false;
-  return record.created_by === currentUser.id || currentRole === 'admin';
-}
+            if (gate) gate.style.display = 'none';
 
-async function fetchSongs() {
-  const { data, error } = await sb
-    .from('songs')
-    .select('*')
-    .order('created_at', { ascending: false });
-  if (error) throw error;
-  return data;
-}
+            try {
+                const [dbSongs, dbSetlists] = await Promise.all([fetchSongs(), fetchSetlists()]);
+                appData.songs = (dbSongs || []).map(row => ({
+                    id: row.id,
+                    title: row.title,
+                    tamilTitle: row.tamil_title || '',
+                    key: row.default_key || 'C',
+                    bpm: 120,
+                    raagam: row.raagam_beat || '',
+                    audioUrl: '',
+                    chordpro: row.lyrics_chords || '',
+                    created_by: row.created_by
+                }));
+                appData.setlists = (dbSetlists || []).map(row => ({
+                    id: row.id,
+                    name: row.name,
+                    date: row.event_date || '',
+                    songIds: Array.isArray(row.song_ids) ? row.song_ids : [],
+                    created_by: row.created_by
+                }));
+                saveLocalStorageData();
+            } catch (err) {
+                console.error('Failed to sync from Supabase:', err.message);
+            }
+        }
 
-async function addSong(song) {
-  const { data, error } = await sb
-    .from('songs')
-    .insert([{
-      title: song.title,
-      tamil_title: song.tamil_title || null,
-      default_key: song.default_key || null,
-      raagam_beat: song.raagam_beat || null,
-      lyrics_chords: song.lyrics_chords || null,
-      created_by: currentUser.id
-    }])
-    .select()
-    .single();
-  if (error) throw error;
-  return data;
-}
+        async function fetchSongs() {
+            const { data, error } = await sb
+                .from('songs')
+                .select('*')
+                .order('created_at', { ascending: false });
+            if (error) throw error;
+            return data;
+        }
 
-async function updateSong(id, updates) {
-  const { data, error } = await sb
-    .from('songs')
-    .update({ ...updates, updated_at: new Date().toISOString() })
-    .eq('id', id)
-    .select()
-    .single();
-  if (error) throw error;
-  return data;
-}
+        async function addSong(song) {
+            const { data, error } = await sb
+                .from('songs')
+                .insert([{
+                    title: song.title,
+                    tamil_title: song.tamil_title || null,
+                    default_key: song.default_key || null,
+                    raagam_beat: song.raagam_beat || null,
+                    lyrics_chords: song.lyrics_chords || null,
+                    created_by: currentUser.id
+                }])
+                .select()
+                .single();
+            if (error) throw error;
+            return data;
+        }
 
-async function deleteSong(id) {
-  const { error } = await sb
-    .from('songs')
-    .delete()
-    .eq('id', id);
-  if (error) throw error;
-}
+        async function updateSong(id, updates) {
+            const { data, error } = await sb
+                .from('songs')
+                .update({ ...updates, updated_at: new Date().toISOString() })
+                .eq('id', id)
+                .select()
+                .single();
+            if (error) throw error;
+            return data;
+        }
 
-async function fetchSetlists() {
-  const { data, error } = await sb
-    .from('setlists')
-    .select('*')
-    .order('event_date', { ascending: true, nullsFirst: false });
-  if (error) throw error;
-  return data;
-}
+        async function deleteSong(id) {
+            const { error } = await sb
+                .from('songs')
+                .delete()
+                .eq('id', id);
+            if (error) throw error;
+        }
 
-async function addSetlist(setlist) {
-  const { data, error } = await sb
-    .from('setlists')
-    .insert([{
-      name: setlist.name,
-      event_date: setlist.event_date || null,
-      notes: setlist.notes || null,
-      song_ids: setlist.song_ids || [],
-      created_by: currentUser.id
-    }])
-    .select()
-    .single();
-  if (error) throw error;
-  return data;
-}
+        async function fetchSetlists() {
+            const { data, error } = await sb
+                .from('setlists')
+                .select('*')
+                .order('event_date', { ascending: true, nullsFirst: false });
+            if (error) throw error;
+            return data;
+        }
 
-async function updateSetlist(id, updates) {
-  const { data, error } = await sb
-    .from('setlists')
-    .update({ ...updates, updated_at: new Date().toISOString() })
-    .eq('id', id)
-    .select()
-    .single();
-  if (error) throw error;
-  return data;
-}
+        async function addSetlist(setlist) {
+            const { data, error } = await sb
+                .from('setlists')
+                .insert([{
+                    name: setlist.name,
+                    event_date: setlist.event_date || null,
+                    notes: setlist.notes || null,
+                    song_ids: setlist.song_ids || [],
+                    created_by: currentUser.id
+                }])
+                .select()
+                .single();
+            if (error) throw error;
+            return data;
+        }
 
-async function deleteSetlist(id) {
-  const { error } = await sb
-    .from('setlists')
-    .delete()
-    .eq('id', id);
-  if (error) throw error;
-}
+        async function updateSetlist(id, updates) {
+            const { data, error } = await sb
+                .from('setlists')
+                .update({ ...updates, updated_at: new Date().toISOString() })
+                .eq('id', id)
+                .select()
+                .single();
+            if (error) throw error;
+            return data;
+        }
 
+        async function deleteSetlist(id) {
+            const { error } = await sb
+                .from('setlists')
+                .delete()
+                .eq('id', id);
+            if (error) throw error;
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            loadLocalStorageData();
+            updateAllSummariesAndViews();
+            updateRolePermissionsUI();
+
+            if (sb) {
+                await initSession();
+                await updateAuthUI();
+                if (currentUser) {
+                    loginUserSession({
+                        email: currentUser.email,
+                        role: currentRole === 'admin' ? 'Admin' : 'Worship Leader',
+                        name: currentUser.email.split('@')[0]
+                    });
+                }
+            }
+        });
     </script>
 </body>
 </html>

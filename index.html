@@ -1,0 +1,1576 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worship & Band Lyrics & Chord Platform - Lychord</title>
+    
+    <!-- PWA Meta Tags & Manifest Link -->
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Lychord">
+    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22Lychord%20Worship%20Platform%22%2C%22short_name%22%3A%22LychordApp%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230f172a%22%2C%22theme_color%22%3A%22%234f46e5%22%2C%22icons%22%3A%5B%5D%7D">
+
+    <!-- Google Fonts for English and Tamil Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Mukta+Malar:wght@400;600;700&family=Noto+Sans+Tamil:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- QRCode.js Library for Client-side QR Code Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-card-hover: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-chord: #38bdf8;
+            --accent-tamil: #f59e0b;
+            --accent-success: #10b981;
+            --accent-danger: #ef4444;
+            --border-color: #334155;
+            --font-main: 'Inter', sans-serif;
+            --font-tamil: 'Noto Sans Tamil', 'Mukta Malar', sans-serif;
+        }
+
+        body.light-theme {
+            --bg-dark: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f1f5f9;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent-chord: #0284c7;
+            --border-color: #e2e8f0;
+        }
+
+        body.high-contrast {
+            --bg-dark: #000000;
+            --bg-card: #050505;
+            --bg-card-hover: #111111;
+            --text-main: #ffffff;
+            --text-muted: #e2e8f0;
+            --accent-chord: #00ffff;
+            --accent-tamil: #ffb703;
+            --border-color: #444444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-main);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .tamil-text {
+            font-family: var(--font-tamil);
+        }
+
+        header {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .logo i {
+            color: var(--primary);
+        }
+
+        nav {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            padding: 0.5rem 0.85rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background-color: var(--bg-card-hover);
+            color: var(--text-main);
+            border-color: var(--border-color);
+        }
+
+        .nav-btn.active {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .role-badge {
+            background-color: rgba(79, 70, 229, 0.15);
+            color: var(--primary);
+            padding: 0.25rem 0.6rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid rgba(79, 70, 229, 0.3);
+            text-transform: uppercase;
+        }
+
+        main {
+            flex: 1;
+            padding: 1.5rem;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .grid-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--bg-card-hover);
+        }
+
+        .btn-danger {
+            background-color: var(--accent-danger);
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        .btn-success {
+            background-color: var(--accent-success);
+        }
+
+        .btn-success:hover {
+            background-color: #059669;
+        }
+
+        .btn-sm {
+            padding: 0.35rem 0.7rem;
+            font-size: 0.85rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.65rem 0.85rem;
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--bg-card);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .data-table th, .data-table td {
+            padding: 0.85rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table th {
+            background-color: rgba(0, 0, 0, 0.2);
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .data-table tr:hover {
+            background-color: var(--bg-card-hover);
+        }
+
+        .toolbar {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 0.85rem 1.25rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+        }
+
+        .toolbar-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chord-sheet-container {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.1rem;
+            line-height: 2;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .chord-line {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 0.75rem;
+        }
+
+        .chord-pair {
+            display: flex;
+            flex-direction: column;
+            margin-right: 0.5rem;
+        }
+
+        .chord {
+            color: var(--accent-chord);
+            font-weight: bold;
+            font-size: 1rem;
+            line-height: 1.2;
+            height: 1.3em;
+        }
+
+        .lyric {
+            color: var(--text-main);
+            font-family: var(--font-main);
+            font-size: 1.1rem;
+            line-height: 1.2;
+        }
+
+        .lyric.tamil {
+            font-family: var(--font-tamil);
+        }
+
+        .stage-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000000;
+            color: #ffffff;
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 2rem;
+            display: none;
+        }
+
+        .stage-mode.active {
+            display: block;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1500;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            width: 100%;
+            max-width: 650px;
+            padding: 1.5rem;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            cursor: pointer;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--bg-card);
+            border: 1px solid var(--primary);
+            color: var(--text-main);
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 3000;
+        }
+
+        .toast.active {
+            display: flex;
+            animation: fadeInOut 4s forwards;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translate(-50%, 20px); }
+            15% { opacity: 1; transform: translate(-50%, 0); }
+            85% { opacity: 1; transform: translate(-50%, 0); }
+            100% { opacity: 0; transform: translate(-50%, -20px); }
+        }
+
+        .audio-player-container {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .security-banner {
+            background: rgba(245, 158, 11, 0.14);
+            border: 1px solid var(--accent-tamil);
+            color: var(--text-main);
+            padding: 0.85rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        @media print {
+            body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+            }
+            header, .toolbar, .stage-controls, .modal, .btn, nav, .card-header i, .audio-player-container, .security-banner {
+                display: none !important;
+            }
+            .chord-sheet-container {
+                background-color: #ffffff !important;
+                border: none !important;
+                color: #000000 !important;
+                font-size: 1rem !important;
+                padding: 0 !important;
+                page-break-after: always;
+            }
+            .chord {
+                color: #000000 !important;
+                font-weight: 700 !important;
+            }
+            .lyric {
+                color: #000000 !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            nav {
+                overflow-x: auto;
+                width: 100%;
+                padding-bottom: 0.5rem;
+            }
+            .toolbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .chord-sheet-container {
+                padding: 1rem;
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="logo">
+            <i class="fa-solid fa-music"></i>
+            <span>Lychord <small style="font-size: 0.75rem; color: var(--accent-tamil);">AM Production</small></span>
+        </div>
+        <nav id="main-nav">
+            <button class="nav-btn admin-only" data-tab="dashboard" id="tab-btn-dashboard" onclick="showTab('dashboard')"><i class="fa-solid fa-chart-pie"></i> Dashboard</button>
+            <button class="nav-btn active" data-tab="songs" id="tab-btn-songs" onclick="showTab('songs')"><i class="fa-solid fa-book"></i> Songs</button>
+            <button class="nav-btn" data-tab="setlists" id="tab-btn-setlists" onclick="checkAuthAndShowTab('setlists')"><i class="fa-solid fa-list-check"></i> Setlists</button>
+            <button class="nav-btn" data-tab="rosters" id="tab-btn-rosters" onclick="checkAuthAndShowTab('rosters')"><i class="fa-solid fa-users"></i> Rosters</button>
+            <button class="nav-btn" data-tab="feedback" id="tab-btn-feedback" onclick="showTab('feedback')"><i class="fa-solid fa-comments"></i> Feedback</button>
+            <button class="nav-btn admin-only" data-tab="drive" id="tab-btn-drive" onclick="showTab('drive')"><i class="fa-brands fa-google-drive"></i> Drive Sync</button>
+        </nav>
+        <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+            <!-- Logged-in user badge displayed after email login -->
+            <div id="user-profile-badge" style="display: none; background: rgba(16, 185, 129, 0.15); border: 1px solid var(--accent-success); color: var(--text-main); padding: 0.35rem 0.75rem; border-radius: 2rem; font-size: 0.85rem; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-user-check" style="color: var(--accent-success);"></i>
+                <span id="logged-user-display" style="font-weight: 600;">User</span>
+                <span id="logged-role-display" class="role-badge" style="background: var(--accent-success); color: white; font-size: 0.7rem;">Role</span>
+                <button class="admin-only" onclick="openChangeAdminPasswordModal()" title="Change Admin Password" style="background: none; border: none; color: var(--accent-tamil); cursor: pointer; margin-left: 0.2rem;"><i class="fa-solid fa-key"></i></button>
+                <button onclick="logoutUser()" title="Logout" style="background: none; border: none; color: var(--accent-danger); cursor: pointer; margin-left: 0.2rem;"><i class="fa-solid fa-right-from-bracket"></i></button>
+            </div>
+
+            <button class="btn btn-secondary btn-sm" id="team-login-header-btn" onclick="openEmailLoginModal()" title="Login / Register via Email"><i class="fa-solid fa-right-to-bracket"></i> Login / Register</button>
+            
+            <button class="btn btn-secondary btn-sm" onclick="toggleTheme()" title="Toggle Theme"><i class="fa-solid fa-moon"></i></button>
+            <button class="btn btn-secondary btn-sm" onclick="toggleHighContrast()" title="Stage High Contrast Mode" style="border-color: var(--accent-chord);"><i class="fa-solid fa-circle-half-stroke"></i> Stage Mode</button>
+        </div>
+    </header>
+
+    <!-- Main Content Workspace -->
+    <main>
+        <!-- Prompt shown to admin after first-time setup login until password is changed -->
+        <div id="first-login-password-banner" class="security-banner admin-only" style="display: none;">
+            <div>
+                <strong style="color: var(--accent-tamil);"><i class="fa-solid fa-shield-exclamation"></i> Set Your Custom Admin Password:</strong>
+                <span style="font-size: 0.9rem; color: var(--text-muted);">You logged in with the temporary setup password. Please set a new admin password now; the temporary password will be retired once updated.</span>
+            </div>
+            <button class="btn btn-sm btn-success" onclick="openChangeAdminPasswordModal()"><i class="fa-solid fa-key"></i> Change Password Now</button>
+        </div>
+
+        <!-- 1. DASHBOARD TAB (ADMIN ONLY) -->
+        <section id="tab-dashboard" class="tab-content admin-only">
+            <h2 style="margin-bottom: 1.25rem;">Team Overview Lychord</h2>
+            <div class="grid-dashboard">
+                <div class="card">
+                    <div class="card-header"><span class="card-title"><i class="fa-solid fa-music"></i> Total Songs</span></div>
+                    <div class="stat-value" id="summary-song-count">0</div>
+                    <small style="color: var(--accent-tamil);">Including Tamil & Tanglish Chord sheets</small>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="card-title"><i class="fa-solid fa-calendar-check"></i> Active Setlists</span></div>
+                    <div class="stat-value" id="summary-setlist-count">0</div>
+                    <small style="color: var(--accent-success);">Ready for Worship Services</small>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="card-title"><i class="fa-solid fa-users-gear"></i> Team Rosters</span></div>
+                    <div class="stat-value" id="summary-roster-count">0</div>
+                    <small style="color: var(--primary);">Configured for Admin Control</small>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="card-title"><i class="fa-solid fa-comments"></i> Feedbacks</span></div>
+                    <div class="stat-value" id="summary-feedback-count">0</div>
+                    <small style="color: var(--accent-chord);">User inquiries & reviews</small>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. SONGS TAB (PUBLIC ACCESS) -->
+        <section id="tab-songs" class="tab-content active">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                <h2>Song Library (Public View)</h2>
+                <button class="btn leader-or-admin" onclick="openAddSongChoiceModal()"><i class="fa-solid fa-plus"></i> Add New Song</button>
+            </div>
+
+            <div class="toolbar">
+                <div class="toolbar-group">
+                    <input type="text" id="song-search-input" class="form-control" placeholder="Search by title, Tamil, or Raagam..." onkeyup="renderSongTable()" style="width: 260px;">
+                </div>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Song Title</th>
+                        <th>Tamil Title</th>
+                        <th>Default Key</th>
+                        <th>Raagam / Beat</th>
+                        <th class="leader-or-admin">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="song-table-body"></tbody>
+            </table>
+        </section>
+
+        <!-- 3. SONG DETAIL & CHORDPRO VIEWER TAB -->
+        <section id="tab-song-view" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <button class="btn btn-secondary btn-sm" onclick="showTab('songs')"><i class="fa-solid fa-arrow-left"></i> Back to Songs</button>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <button class="btn btn-secondary btn-sm" onclick="window.print()"><i class="fa-solid fa-print"></i> Print / PDF</button>
+                    <button class="btn btn-secondary btn-sm leader-or-admin" onclick="editCurrentSong()"><i class="fa-solid fa-pen"></i> Edit</button>
+                    <button class="btn btn-success btn-sm" onclick="launchStageMode()"><i class="fa-solid fa-expand"></i> Launch Stage View</button>
+                </div>
+            </div>
+
+            <div class="toolbar">
+                <div class="toolbar-group">
+                    <span style="font-size: 0.875rem; font-weight: 600; color: var(--text-muted);">KEY:</span>
+                    <button class="btn btn-secondary btn-sm" onclick="transposeKey(-1)">-1</button>
+                    <span id="current-key-display" style="font-weight: 700; min-width: 30px; text-align: center;">C</span>
+                    <button class="btn btn-secondary btn-sm" onclick="transposeKey(1)">+1</button>
+                </div>
+
+                <div class="toolbar-group">
+                    <span style="font-size: 0.875rem; font-weight: 600; color: var(--text-muted);">SCRIPT:</span>
+                    <select id="script-view-mode" class="form-control" style="width: auto; padding: 0.35rem 0.6rem;" onchange="renderCurrentSong()">
+                        <option value="dual">Dual View (Tamil + Tanglish)</option>
+                        <option value="tamil">Tamil Script Only</option>
+                        <option value="tanglish">Tanglish Only</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="audio-player-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-headphones" style="color: var(--accent-chord); font-size: 1.2rem;"></i>
+                        <h4 style="font-size: 0.95rem;">Audio Reference Track / Demo</h4>
+                    </div>
+                    <div class="leader-or-admin" style="display: flex; gap: 0.5rem;">
+                        <input type="file" id="audio-file-input" accept="audio/*" style="display: none;" onchange="handleAudioFileUpload(event)">
+                        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('audio-file-input').click()"><i class="fa-solid fa-upload"></i> Upload Audio</button>
+                        <button class="btn btn-secondary btn-sm" onclick="promptAudioUrl()"><i class="fa-solid fa-link"></i> Audio URL</button>
+                    </div>
+                </div>
+                <audio id="song-audio-player" controls style="width: 100%; height: 36px; border-radius: 0.5rem;"></audio>
+            </div>
+
+            <div id="chord-sheet-display" class="chord-sheet-container"></div>
+        </section>
+
+        <!-- 4. SETLISTS TAB (GATED) -->
+        <section id="tab-setlists" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                <h2>Worship Setlists</h2>
+                <button class="btn leader-or-admin" onclick="openSetlistModal()"><i class="fa-solid fa-plus"></i> Create Setlist</button>
+            </div>
+            <div id="setlist-cards-container" class="grid-dashboard"></div>
+        </section>
+
+        <!-- 5. ROSTERS TAB (GATED) -->
+        <section id="tab-rosters" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                <h2>Team Rosters & Members</h2>
+                <button class="btn leader-or-admin" onclick="openRosterModal()"><i class="fa-solid fa-plus"></i> Create New Roster</button>
+            </div>
+            <div id="roster-list-container"></div>
+        </section>
+
+        <!-- 6. FEEDBACK TAB (PRIVATE USER FEEDBACK & ADMIN INBOX) -->
+        <section id="tab-feedback" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                <h2>User Feedback & Support Center</h2>
+            </div>
+            
+            <!-- Submit Feedback Form (For Logged-in / Public users) -->
+            <div class="card" style="margin-bottom: 1.5rem;" id="submit-feedback-card">
+                <h3 style="margin-bottom: 0.75rem;"><i class="fa-solid fa-paper-plane"></i> Send Feedback to Admin</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">Your feedback is completely private and visible only to you and the Admin.</p>
+                <div class="form-group">
+                    <label>Your Email ID</label>
+                    <input type="email" id="feedback-email-input" class="form-control" placeholder="e.g. yourname@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Message / Inquiry</label>
+                    <textarea id="feedback-message-input" class="form-control" rows="4" placeholder="Write your feedback, song request, or bug report..."></textarea>
+                </div>
+                <button class="btn btn-success" onclick="submitUserFeedback()"><i class="fa-solid fa-paper-plane"></i> Submit Private Feedback</button>
+            </div>
+
+            <!-- User's Sent Feedback & Replies Inbox -->
+            <div class="card" id="user-feedback-history-card">
+                <h3 style="margin-bottom: 0.75rem;"><i class="fa-solid fa-inbox"></i> Your Submitted Feedback & Admin Replies</h3>
+                <div id="user-feedback-list">
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Log in or enter your email above to view your feedback history and admin replies.</p>
+                </div>
+            </div>
+
+            <!-- Admin Inbox (Only for Admin) -->
+            <div class="card admin-only" style="margin-top: 1.5rem;">
+                <h3 style="margin-bottom: 0.75rem;"><i class="fa-solid fa-user-shield"></i> Admin Feedback Inbox & Replies</h3>
+                <div id="admin-feedback-inbox"></div>
+            </div>
+        </section>
+
+        <!-- 7. GOOGLE DRIVE SYNC TAB (ADMIN ONLY) -->
+        <section id="tab-drive" class="tab-content admin-only">
+            <h2 style="margin-bottom: 1.25rem;">Google Drive Data Storage & Sync</h2>
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <h3 style="margin-bottom: 0.75rem;"><i class="fa-brands fa-google-drive"></i> Backup & Sync App Data</h3>
+                <p style="color: var(--text-muted); margin-bottom: 1.25rem; font-size: 0.95rem;">
+                    Sync all your songs, setlists, rosters, and feedback with Google Drive by exporting/importing JSON files.
+                </p>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button class="btn btn-success" onclick="exportDataJSON()"><i class="fa-solid fa-download"></i> Export Data to JSON</button>
+                    <button class="btn btn-secondary" onclick="triggerFileInput()"><i class="fa-solid fa-upload"></i> Restore / Import JSON</button>
+                    <input type="file" id="import-file-input" style="display: none;" accept=".json" onchange="importDataJSON(event)">
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 0.75rem;"><i class="fa-solid fa-key"></i> Lychord Admin Password Management</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+                    Change your admin password once logged in. Minimum 6 characters recommended.
+                </p>
+                <button class="btn" onclick="openChangeAdminPasswordModal()"><i class="fa-solid fa-shield-halved"></i> Change Admin Password</button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL: EMAIL LOGIN / REGISTRATION / PASSWORD CREATION -->
+    <div id="email-login-modal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <div class="modal-header">
+                <h3 id="email-auth-title">Team Member Login / Register</h3>
+                <button class="close-btn" onclick="closeEmailLoginModal()">&times;</button>
+            </div>
+            
+            <div id="auth-form-step">
+                <div class="form-group">
+                    <label>Email ID (User ID)</label>
+                    <input type="email" id="auth-email-input" class="form-control" placeholder="e.g. member@example.com" required>
+                </div>
+                <div class="form-group" id="auth-password-group">
+                    <label>Password</label>
+                    <input type="password" id="auth-password-input" class="form-control" placeholder="Enter your password">
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; font-size: 0.85rem;">
+                    <a href="#" onclick="triggerForgotPasswordWorkflow()" style="color: var(--accent-chord); text-decoration: none;">Forgot Password?</a>
+                    <a href="#" onclick="toggleRegisterMode()" id="toggle-register-link" style="color: var(--accent-tamil); text-decoration: none;">New User? Create Account</a>
+                </div>
+                <button class="btn btn-success" style="width: 100%; justify-content: center;" id="auth-action-btn" onclick="handleEmailAuth()"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CHANGE ADMIN PASSWORD (AFTER LOGIN) -->
+    <div id="change-admin-password-modal" class="modal">
+        <div class="modal-content" style="max-width: 430px;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-key"></i> Change Admin Password</h3>
+                <button class="close-btn" onclick="closeChangeAdminPasswordModal()">&times;</button>
+            </div>
+            <form id="change-admin-password-form" onsubmit="submitNewAdminPassword(event)">
+                <div class="form-group">
+                    <label>Current Password</label>
+                    <input type="password" id="current-admin-password-input" class="form-control" required placeholder="Enter current or initial password">
+                </div>
+                <div class="form-group">
+                    <label>New Admin Password</label>
+                    <input type="password" id="new-admin-password-input" class="form-control" required minlength="6" placeholder="At least 6 characters">
+                </div>
+                <div class="form-group">
+                    <label>Confirm New Admin Password</label>
+                    <input type="password" id="confirm-admin-password-input" class="form-control" required minlength="6" placeholder="Re-enter new password">
+                </div>
+                <button type="submit" class="btn btn-success" style="width: 100%; justify-content: center;"><i class="fa-solid fa-check"></i> Save New Admin Password</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- FULLSCREEN STAGE MODE OVERLAY -->
+    <div id="stage-mode-view" class="stage-mode">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+            <div>
+                <h1 id="stage-song-title" style="font-size: 2rem; color: #ffffff;">Song Title</h1>
+                <p id="stage-song-meta" style="color: var(--accent-tamil); font-size: 1.1rem;"></p>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="exitStageMode()"><i class="fa-solid fa-xmark"></i> Exit Stage Mode</button>
+        </div>
+        <div id="stage-chord-sheet" class="chord-sheet-container" style="background-color: transparent; border: none; font-size: 1.5rem; line-height: 2.2;"></div>
+    </div>
+
+    <!-- MODAL: ADD/EDIT SONG -->
+    <div id="song-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="song-modal-title">Add New Song</h3>
+                <button class="close-btn" onclick="closeSongModal()">&times;</button>
+            </div>
+            <form id="song-form" onsubmit="saveSong(event)">
+                <input type="hidden" id="song-id">
+                <div class="form-group">
+                    <label>Song Title</label>
+                    <input type="text" id="song-title" class="form-control" required placeholder="e.g. Enatheyellam">
+                </div>
+                <div class="form-group">
+                    <label>Tamil Title</label>
+                    <input type="text" id="song-tamil-title" class="form-control tamil-text" placeholder="e.g. எனதெல்லாம்">
+                </div>
+                <div class="form-group" style="display: flex; gap: 1rem;">
+                    <div style="flex: 1;">
+                        <label>Default Key</label>
+                        <select id="song-key" class="form-control">
+                            <option value="C">C</option><option value="D">D</option><option value="E">E</option>
+                            <option value="F">F</option><option value="G">G</option><option value="A">A</option><option value="B">B</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Tempo (BPM)</label>
+                        <input type="number" id="song-bpm" class="form-control" value="120">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Raagam / Scale</label>
+                    <input type="text" id="song-raagam" class="form-control" placeholder="e.g. Kalyani">
+                </div>
+                <div class="form-group">
+                    <label>ChordPro Notation</label>
+                    <textarea id="song-chordpro" class="form-control" rows="8" required style="font-family: monospace;" placeholder="Use [C] to add chords..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-success" style="width: 100%;">Save Song</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD/EDIT SETLIST -->
+    <div id="setlist-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="setlist-modal-title">Create Setlist</h3>
+                <button class="close-btn" onclick="closeSetlistModal()">&times;</button>
+            </div>
+            <form id="setlist-form" onsubmit="saveSetlist(event)">
+                <input type="hidden" id="setlist-id">
+                <div class="form-group">
+                    <label>Setlist Name</label>
+                    <input type="text" id="setlist-name" class="form-control" required placeholder="e.g. Sunday Morning Service">
+                </div>
+                <div class="form-group">
+                    <label>Service Date</label>
+                    <input type="date" id="setlist-date" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Select Songs</label>
+                    <div id="setlist-songs-checkboxes" style="max-height: 180px; overflow-y: auto; background: var(--bg-dark); padding: 0.75rem; border-radius: 0.5rem; border: 1px solid var(--border-color);"></div>
+                </div>
+                <button type="submit" class="btn btn-success" style="width: 100%;">Save Setlist</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD/EDIT ROSTER -->
+    <div id="roster-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="roster-modal-title">Create Roster</h3>
+                <button class="close-btn" onclick="closeRosterModal()">&times;</button>
+            </div>
+            <form id="roster-form" onsubmit="saveRoster(event)">
+                <input type="hidden" id="roster-id">
+                <div class="form-group">
+                    <label>Roster Name</label>
+                    <input type="text" id="roster-name" class="form-control" required placeholder="e.g. Youth Acoustic Band">
+                </div>
+                <div class="form-group">
+                    <label>Assigned Setlist</label>
+                    <select id="roster-setlist-select" class="form-control">
+                        <option value="">-- No Setlist Assigned --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Member Name</label>
+                    <input type="text" id="member-name" class="form-control" placeholder="e.g. John Doe">
+                </div>
+                <div class="form-group" style="display: flex; gap: 1rem;">
+                    <div style="flex: 1;">
+                        <label>Role</label>
+                        <select id="member-role" class="form-control">
+                            <option value="Worship Leader">Worship Leader</option>
+                            <option value="Vocalist">Vocalist</option>
+                            <option value="Musician">Musician</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Instrument</label>
+                        <input type="text" id="member-instrument" class="form-control" placeholder="e.g. Keyboard">
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="addMemberToList()" style="margin-bottom: 1rem;"><i class="fa-solid fa-plus"></i> Add Member</button>
+                <div id="roster-members-preview" style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">No members added yet.</div>
+                <button type="submit" class="btn btn-success" style="width: 100%;">Save Roster</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-msg" class="toast">
+        <i class="fa-solid fa-info-circle"></i>
+        <span id="toast-text">Action completed successfully.</span>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        const chromaticScale = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+        const INITIAL_SETUP_SECRET = ['a','d','m','i','n','1','2','3'].join('');
+
+        let appData = {
+            songs: [
+                {
+                    id: 's1',
+                    title: 'Enatheyellam',
+                    tamilTitle: 'எனதெல்லாம்',
+                    key: 'G',
+                    bpm: 128,
+                    raagam: 'Kalyani',
+                    audioUrl: '',
+                    chordpro: `{title: Enatheyellam}\n[G]எனதெல்லாம் [C]உமதே [D]இயேசுவே [G]\n[G]Enatheyellam [C]Umathe [D]Yesuve [G]`
+                },
+                {
+                    id: 's2',
+                    title: 'Aaradhanaikku Uriyavarae',
+                    tamilTitle: 'ஆராதனைக்கு உரியவரே',
+                    key: 'C',
+                    bpm: 110,
+                    raagam: 'Keerthanai 6/8',
+                    audioUrl: '',
+                    chordpro: `{title: Aaradhanaikku Uriyavarae}\n[C]ஆராதனைக்கு [F]உரியவரே [G]உம்மை உயர்த்தி [C]பாடுவேன்`
+                }
+            ],
+            setlists: [
+                { id: 'stl1', name: 'Sunday Morning Worship', date: '2026-11-01', songIds: ['s1', 's2'] }
+            ],
+            rosters: [
+                {
+                    id: 'r1',
+                    name: 'Main Sunday Worship Team',
+                    setlistId: 'stl1',
+                    members: [
+                        { name: 'Alstrin Mathan', role: 'Worship Leader', instrument: 'Acoustic Guitar' }
+                    ]
+                }
+            ],
+            users: [],
+            feedback: [
+                { id: 'f1', userEmail: 'member@example.com', userName: 'Team Member', message: 'Amazing app for our worship team!', reply: 'Thank you! Glad it helps.', timestamp: '2026-11-17' }
+            ],
+            adminPasswordHash: '',
+            adminPasswordChanged: false
+        };
+
+        let loggedInUser = null;
+        let currentSongId = null;
+        let currentTransposeSemitones = 0;
+        let isRegisterMode = false;
+
+        async function hashPassword(password) {
+            if (window.crypto && window.crypto.subtle) {
+                const msgBuffer = new TextEncoder().encode(password);
+                const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgBuffer);
+                return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+            }
+            // Fallback for non-secure contexts
+            let hash = 0;
+            for (let i = 0; i < password.length; i++) {
+                hash = ((hash << 5) - hash) + password.charCodeAt(i);
+                hash |= 0;
+            }
+            return 'fb_' + hash;
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadLocalStorageData();
+            updateAllSummariesAndViews();
+            updateRolePermissionsUI();
+        });
+
+        async function loadLocalStorageData() {
+            const saved = localStorage.getItem('lychord_online_data');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    appData = { ...appData, ...parsed };
+                    if (!appData.users) appData.users = [];
+                    if (!appData.feedback) appData.feedback = [];
+                } catch (e) {
+                    console.error('Error loading data:', e);
+                }
+            }
+            if (!appData.adminPasswordHash) {
+                appData.adminPasswordHash = await hashPassword(INITIAL_SETUP_SECRET);
+                appData.adminPasswordChanged = false;
+            }
+            saveLocalStorageData();
+        }
+
+        function saveLocalStorageData() {
+            localStorage.setItem('lychord_online_data', JSON.stringify(appData));
+            updateAllSummariesAndViews();
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            const targetBtn = document.querySelector(`.nav-btn[data-tab="${tabName}"]`);
+            if (targetBtn) targetBtn.classList.add('active');
+
+            const targetContent = document.getElementById(`tab-${tabName}`);
+            if (targetContent) targetContent.classList.add('active');
+
+            if (tabName === 'feedback') {
+                renderFeedbackViews();
+            }
+        }
+
+        function checkAuthAndShowTab(tabName) {
+            if (!loggedInUser) {
+                showToast('Please login with your Email ID to access ' + tabName + '.');
+                openEmailLoginModal();
+                return;
+            }
+            showTab(tabName);
+        }
+
+        function openEmailLoginModal() {
+            isRegisterMode = false;
+            document.getElementById('auth-password-input').value = '';
+            document.getElementById('email-auth-title').innerText = 'Team Member Login';
+            document.getElementById('auth-password-group').style.display = 'block';
+            document.getElementById('auth-action-btn').innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Login';
+            document.getElementById('toggle-register-link').innerText = 'New User? Create Account';
+            document.getElementById('email-login-modal').classList.add('active');
+        }
+
+        function closeEmailLoginModal() {
+            document.getElementById('email-login-modal').classList.remove('active');
+        }
+
+        function toggleRegisterMode() {
+            isRegisterMode = !isRegisterMode;
+            if (isRegisterMode) {
+                document.getElementById('email-auth-title').innerText = 'Create Account via Email';
+                document.getElementById('auth-password-group').style.display = 'block';
+                document.getElementById('auth-action-btn').innerHTML = '<i class="fa-solid fa-user-plus"></i> Send Password Creation Link & Register';
+                document.getElementById('toggle-register-link').innerText = 'Already have an account? Login';
+            } else {
+                openEmailLoginModal();
+            }
+        }
+
+        async function handleEmailAuth() {
+            const email = document.getElementById('auth-email-input').value.trim();
+            const password = document.getElementById('auth-password-input').value;
+
+            if (!email) {
+                alert('Please enter a valid email ID.');
+                return;
+            }
+
+            const pwdHash = await hashPassword(password);
+
+            if (isRegisterMode) {
+                const existing = appData.users.find(u => u.email.toLowerCase() === email.toLowerCase());
+                if (existing) {
+                    alert('An account with this email already exists. Please log in.');
+                    return;
+                }
+                const newUser = { email, passwordHash: pwdHash, role: 'Musician', name: email.split('@')[0] };
+                appData.users.push(newUser);
+                saveLocalStorageData();
+                closeEmailLoginModal();
+                showToast(`[EMAIL SENT] Password creation link sent to ${email}. Account registered!`);
+                loginUserSession(newUser);
+                return;
+            }
+
+            // Check registered users first
+            const matchedUser = appData.users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.passwordHash === pwdHash);
+            if (matchedUser) {
+                closeEmailLoginModal();
+                loginUserSession(matchedUser);
+                return;
+            }
+
+            // Check Admin login against current hashed admin password
+            if (appData.adminPasswordHash && pwdHash === appData.adminPasswordHash) {
+                const adminUser = { email, role: 'Admin', name: 'Admin' };
+                closeEmailLoginModal();
+                loginUserSession(adminUser);
+                if (!appData.adminPasswordChanged) {
+                    openChangeAdminPasswordModal();
+                }
+                return;
+            }
+
+            alert('Invalid Email ID or Password. Please check your credentials or click Forgot Password.');
+        }
+
+        async function triggerForgotPasswordWorkflow() {
+            const email = document.getElementById('auth-email-input').value.trim();
+            if (!email) {
+                alert('Please enter your registered Email ID first.');
+                return;
+            }
+            closeEmailLoginModal();
+            showToast(`[EMAIL SENT] Password reset link dispatched to ${email}. Check your inbox!`);
+            const newPass = prompt(`Simulating Email Reset Link Click!\nEnter your new password for ${email} (min 6 chars):`);
+            if (newPass && newPass.length >= 6) {
+                const newHash = await hashPassword(newPass);
+                let usr = appData.users.find(u => u.email.toLowerCase() === email.toLowerCase());
+                if (usr) {
+                    usr.passwordHash = newHash;
+                } else {
+                    appData.users.push({ email, passwordHash: newHash, role: 'Musician', name: email.split('@')[0] });
+                }
+                saveLocalStorageData();
+                showToast('Password successfully reset! You can now log in.');
+                openEmailLoginModal();
+                document.getElementById('auth-email-input').value = email;
+            } else if (newPass !== null) {
+                alert('Password must be at least 6 characters.');
+            }
+        }
+
+        function loginUserSession(user) {
+            loggedInUser = user;
+            document.getElementById('team-login-header-btn').style.display = 'none';
+            document.getElementById('logged-user-display').innerText = user.name || user.email;
+            document.getElementById('logged-role-display').innerText = user.role;
+            document.getElementById('user-profile-badge').style.display = 'flex';
+            
+            const feedbackEmailField = document.getElementById('feedback-email-input');
+            if (feedbackEmailField) feedbackEmailField.value = user.email;
+
+            updateRolePermissionsUI();
+            renderFeedbackViews();
+            showToast(`Welcome back, ${user.name || user.email}!`);
+        }
+
+        function logoutUser() {
+            loggedInUser = null;
+            document.getElementById('user-profile-badge').style.display = 'none';
+            document.getElementById('team-login-header-btn').style.display = 'inline-flex';
+            updateRolePermissionsUI();
+            showTab('songs');
+            showToast('Logged out successfully.');
+        }
+
+        function updateRolePermissionsUI() {
+            const isAdmin = loggedInUser && loggedInUser.role === 'Admin';
+            document.querySelectorAll('.admin-only').forEach(el => {
+                el.style.display = isAdmin ? '' : 'none';
+            });
+            document.querySelectorAll('.leader-or-admin').forEach(el => {
+                el.style.display = (isAdmin || (loggedInUser && loggedInUser.role === 'Worship Leader')) ? '' : 'none';
+            });
+            const banner = document.getElementById('first-login-password-banner');
+            if (banner) {
+                banner.style.display = (isAdmin && !appData.adminPasswordChanged) ? 'flex' : 'none';
+            }
+        }
+
+        function openChangeAdminPasswordModal() {
+            if (!loggedInUser || loggedInUser.role !== 'Admin') {
+                showToast('Admin login required.');
+                return;
+            }
+            document.getElementById('change-admin-password-form').reset();
+            document.getElementById('change-admin-password-modal').classList.add('active');
+        }
+
+        function closeChangeAdminPasswordModal() {
+            document.getElementById('change-admin-password-modal').classList.remove('active');
+        }
+
+        async function submitNewAdminPassword(event) {
+            event.preventDefault();
+            if (!loggedInUser || loggedInUser.role !== 'Admin') {
+                alert('Unauthorized action.');
+                return;
+            }
+            const currentPwd = document.getElementById('current-admin-password-input').value;
+            const newPwd = document.getElementById('new-admin-password-input').value;
+            const confirmPwd = document.getElementById('confirm-admin-password-input').value;
+
+            const currentHash = await hashPassword(currentPwd);
+            if (currentHash !== appData.adminPasswordHash) {
+                alert('Current password is incorrect.');
+                return;
+            }
+            if (newPwd.length < 6) {
+                alert('New password must be at least 6 characters.');
+                return;
+            }
+            if (newPwd !== confirmPwd) {
+                alert('New password and confirmation do not match.');
+                return;
+            }
+            if (newPwd === INITIAL_SETUP_SECRET) {
+                alert('Please choose a new password different from the initial setup password.');
+                return;
+            }
+
+            appData.adminPasswordHash = await hashPassword(newPwd);
+            appData.adminPasswordChanged = true;
+            saveLocalStorageData();
+            updateRolePermissionsUI();
+            closeChangeAdminPasswordModal();
+            showToast('Admin password updated! Initial setup password is now retired.');
+        }
+
+        function updateAllSummariesAndViews() {
+            document.getElementById('summary-song-count').innerText = appData.songs.length;
+            document.getElementById('summary-setlist-count').innerText = appData.setlists.length;
+            document.getElementById('summary-roster-count').innerText = appData.rosters.length;
+            document.getElementById('summary-feedback-count').innerText = appData.feedback.length;
+
+            renderSongTable();
+            renderSetlists();
+            renderRosters();
+            renderFeedbackViews();
+        }
+
+        // FEEDBACK SYSTEM LOGIC (PRIVATE TO USER & ADMIN)
+        function submitUserFeedback() {
+            const email = document.getElementById('feedback-email-input').value.trim();
+            const message = document.getElementById('feedback-message-input').value.trim();
+
+            if (!email || !message) {
+                alert('Please enter your email and message.');
+                return;
+            }
+
+            const newFeedback = {
+                id: 'fb_' + Date.now(),
+                userEmail: email,
+                userName: loggedInUser ? loggedInUser.name : email.split('@')[0],
+                message,
+                reply: '',
+                timestamp: new Date().toISOString().split('T')[0]
+            };
+
+            appData.feedback.push(newFeedback);
+            saveLocalStorageData();
+            document.getElementById('feedback-message-input').value = '';
+            showToast('Feedback submitted privately to Admin!');
+            renderFeedbackViews();
+        }
+
+        function renderFeedbackViews() {
+            const userListContainer = document.getElementById('user-feedback-list');
+            const adminInboxContainer = document.getElementById('admin-feedback-inbox');
+
+            const currentEmail = loggedInUser ? loggedInUser.email : document.getElementById('feedback-email-input').value.trim();
+
+            // 1. Render User's Private History
+            if (!currentEmail) {
+                userListContainer.innerHTML = '<p style="color:var(--text-muted); font-size:0.9rem;">Please enter your email or log in to view your feedback history.</p>';
+            } else {
+                const myFeedback = appData.feedback.filter(f => f.userEmail.toLowerCase() === currentEmail.toLowerCase());
+                if (myFeedback.length === 0) {
+                    userListContainer.innerHTML = '<p style="color:var(--text-muted); font-size:0.9rem;">You have not submitted any feedback yet.</p>';
+                } else {
+                    userListContainer.innerHTML = myFeedback.map(f => `
+                        <div style="background:var(--bg-dark); padding:1rem; border-radius:0.5rem; border:1px solid var(--border-color); margin-bottom:0.75rem;">
+                            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.3rem;">Submitted on: ${f.timestamp}</div>
+                            <p style="margin-bottom:0.5rem; font-weight:500;">"${f.message}"</p>
+                            ${f.reply ? `<div style="background:rgba(16,185,129,0.1); border-left:3px solid var(--accent-success); padding:0.5rem 0.75rem; margin-top:0.5rem; font-size:0.9rem;"><strong style="color:var(--accent-success);">Admin Reply:</strong> ${f.reply}</div>` : '<div style="font-size:0.85rem; color:var(--accent-tamil);">Status: Pending Admin Reply</div>'}
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // 2. Render Admin Inbox
+            if (loggedInUser && loggedInUser.role === 'Admin') {
+                if (appData.feedback.length === 0) {
+                    adminInboxContainer.innerHTML = '<p style="color:var(--text-muted);">No feedback received yet.</p>';
+                } else {
+                    adminInboxContainer.innerHTML = appData.feedback.map(f => `
+                        <div style="background:var(--bg-dark); padding:1rem; border-radius:0.5rem; border:1px solid var(--border-color); margin-bottom:1rem;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:0.4rem; font-size:0.85rem;">
+                                <strong style="color:var(--accent-chord);">${f.userEmail}</strong>
+                                <span style="color:var(--text-muted);">${f.timestamp}</span>
+                            </div>
+                            <p style="margin-bottom:0.75rem;">${f.message}</p>
+                            ${f.reply ? `<div style="background:rgba(16,185,129,0.1); padding:0.5rem; margin-bottom:0.5rem; font-size:0.85rem;"><strong>Current Reply:</strong> ${f.reply}</div>` : ''}
+                            <div style="display:flex; gap:0.5rem;">
+                                <input type="text" id="admin-reply-input-${f.id}" class="form-control" placeholder="Type reply..." value="${f.reply || ''}">
+                                <button class="btn btn-sm" onclick="sendAdminReply('${f.id}')">Send Reply</button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+        }
+
+        function sendAdminReply(feedbackId) {
+            const replyText = document.getElementById(`admin-reply-input-${feedbackId}`).value.trim();
+            const fb = appData.feedback.find(f => f.id === feedbackId);
+            if (fb) {
+                fb.reply = replyText;
+                saveLocalStorageData();
+                showToast('Admin reply sent successfully!');
+                renderFeedbackViews();
+            }
+        }
+
+        function renderSongTable() {
+            const tbody = document.getElementById('song-table-body');
+            tbody.innerHTML = '';
+            const searchVal = document.getElementById('song-search-input').value.toLowerCase();
+
+            appData.songs.filter(s => s.title.toLowerCase().includes(searchVal) || (s.tamilTitle && s.tamilTitle.includes(searchVal))).forEach(song => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong style="cursor:pointer; color:var(--accent-chord);" onclick="viewSong('${song.id}')">${song.title}</strong></td>
+                    <td class="tamil-text" style="color:var(--accent-tamil);">${song.tamilTitle || '-'}</td>
+                    <td><span class="role-badge">${song.key}</span></td>
+                    <td>${song.raagam || '-'}</td>
+                    <td class="leader-or-admin">
+                        <button class="btn btn-secondary btn-sm" onclick="openSongModal('${song.id}')"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteSong('${song.id}')"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            updateRolePermissionsUI();
+        }
+
+        function viewSong(songId) {
+            currentSongId = songId;
+            currentTransposeSemitones = 0;
+            const song = appData.songs.find(s => s.id === songId);
+            const player = document.getElementById('song-audio-player');
+            if (song && song.audioUrl) {
+                player.src = song.audioUrl;
+            } else {
+                player.src = '';
+            }
+            renderCurrentSong();
+            showTab('song-view');
+        }
+
+        function transposeChord(chord, semitones) {
+            if (!chord || semitones === 0) return chord;
+            return chord.replace(/[A-G][#b]?/g, (match) => {
+                let index = chromaticScale.indexOf(match);
+                if (index === -1) return match;
+                let newIndex = (index + semitones) % 12;
+                if (newIndex < 0) newIndex += 12;
+                return chromaticScale[newIndex];
+            });
+        }
+
+        function formatChordProToHTML(chordproText, semitones = 0) {
+            let resultHTML = '';
+            const lines = chordproText.split('\n');
+            lines.forEach(line => {
+                if (line.startsWith('{') && line.endsWith('}')) return;
+                const lineDiv = document.createElement('div');
+                lineDiv.className = 'chord-line';
+                const regex = /\[(.*?)\]|([^\[]+)/g;
+                let match;
+                let currentChord = '';
+                while ((match = regex.exec(line)) !== null) {
+                    if (match[1]) {
+                        currentChord = transposeChord(match[1], semitones);
+                    } else if (match[2]) {
+                        const pair = document.createElement('div');
+                        pair.className = 'chord-pair';
+                        const chordSpan = document.createElement('span');
+                        chordSpan.className = 'chord';
+                        chordSpan.innerText = currentChord;
+                        pair.appendChild(chordSpan);
+
+                        const lyricSpan = document.createElement('span');
+                        lyricSpan.className = 'lyric';
+                        if (/[\u0B80-\u0BFF]/.test(match[2])) lyricSpan.classList.add('tamil');
+                        lyricSpan.innerText = match[2];
+                        pair.appendChild(lyricSpan);
+
+                        lineDiv.appendChild(pair);
+                        currentChord = '';
+                    }
+                }
+                resultHTML += lineDiv.outerHTML;
+            });
+            return resultHTML;
+        }
+
+        function renderCurrentSong() {
+            const song = appData.songs.find(s => s.id === currentSongId);
+            if (!song) return;
+            const targetKey = transposeChord(song.key, currentTransposeSemitones);
+            document.getElementById('current-key-display').innerText = targetKey;
+            document.getElementById('chord-sheet-display').innerHTML = formatChordProToHTML(song.chordpro, currentTransposeSemitones);
+        }
+
+        function transposeKey(semitones) {
+            currentTransposeSemitones += semitones;
+            renderCurrentSong();
+        }
+
+        function openAddSongChoiceModal() { openSongModal(); }
+        function openSongModal(id = null) {
+            document.getElementById('song-form').reset();
+            if (id) {
+                const song = appData.songs.find(s => s.id === id);
+                document.getElementById('song-id').value = song.id;
+                document.getElementById('song-title').value = song.title;
+                document.getElementById('song-tamil-title').value = song.tamilTitle;
+                document.getElementById('song-key').value = song.key;
+                document.getElementById('song-bpm').value = song.bpm || 120;
+                document.getElementById('song-raagam').value = song.raagam;
+                document.getElementById('song-chordpro').value = song.chordpro;
+                document.getElementById('song-modal-title').innerText = 'Edit Song';
+            } else {
+                document.getElementById('song-id').value = '';
+                document.getElementById('song-modal-title').innerText = 'Add New Song';
+            }
+            document.getElementById('song-modal').classList.add('active');
+        }
+        function closeSongModal() { document.getElementById('song-modal').classList.remove('active'); }
+
+        function saveSong(event) {
+            event.preventDefault();
+            const id = document.getElementById('song-id').value;
+            const title = document.getElementById('song-title').value.trim();
+            const tamilTitle = document.getElementById('song-tamil-title').value;
+            const key = document.getElementById('song-key').value;
+            const bpm = parseInt(document.getElementById('song-bpm').value) || 120;
+            const raagam = document.getElementById('song-raagam').value;
+            const chordpro = document.getElementById('song-chordpro').value;
+
+            const songId = id || ('s_' + Date.now());
+            const newSong = { id: songId, title, tamilTitle, key, bpm, raagam, audioUrl: '', chordpro };
+
+            const index = appData.songs.findIndex(s => s.id === songId);
+            if (index > -1) appData.songs[index] = newSong;
+            else appData.songs.push(newSong);
+
+            saveLocalStorageData();
+            closeSongModal();
+            showToast('Song saved successfully!');
+        }
+
+        function deleteSong(id) {
+            if (confirm('Delete this song?')) {
+                appData.songs = appData.songs.filter(s => s.id !== id);
+                saveLocalStorageData();
+                showToast('Song deleted');
+            }
+        }
+
+        function renderSetlists() {
+            const container = document.getElementById('setlist-cards-container');
+            container.innerHTML = '';
+            appData.setlists.forEach(s => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-header"><span class="card-title">${s.name}</span><span class="role-badge">${s.date}</span></div>
+                    <div style="display:flex; flex-direction:column; gap:0.3rem; margin-bottom:1rem;">
+                        ${s.songIds.map(sid => { const sn = appData.songs.find(st => st.id === sid); return sn ? `<span style="color:var(--accent-chord); font-size:0.85rem;">• ${sn.title} (${sn.key})</span>` : ''; }).join('')}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderRosters() {
+            const container = document.getElementById('roster-list-container');
+            container.innerHTML = '';
+            appData.rosters.forEach(r => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-header"><h3>${r.name}</h3><span class="role-badge">${r.members.length} Members</span></div>
+                    <ul style="list-style:none;">
+                        ${r.members.map(m => `<li style="padding:0.3rem 0; border-bottom:1px solid var(--border-color);"><strong>${m.name}</strong> (${m.role} - ${m.instrument})</li>`).join('')}
+                    </ul>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function launchStageMode() {
+            const song = appData.songs.find(s => s.id === currentSongId);
+            if (!song) return;
+            document.getElementById('stage-song-title').innerText = song.title;
+            document.getElementById('stage-song-meta').innerText = `Key: ${song.key} | BPM: ${song.bpm || 120}`;
+            document.getElementById('stage-chord-sheet').innerHTML = document.getElementById('chord-sheet-display').innerHTML;
+            document.getElementById('stage-mode-view').classList.add('active');
+        }
+
+        function exitStageMode() {
+            document.getElementById('stage-mode-view').classList.remove('active');
+        }
+
+        function exportDataJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+            const dl = document.createElement('a');
+            dl.setAttribute("href", dataStr);
+            dl.setAttribute("download", "lychord_online_data.json");
+            document.body.appendChild(dl);
+            dl.click();
+            dl.remove();
+        }
+
+        function triggerFileInput() { document.getElementById('import-file-input').click(); }
+        function importDataJSON(event) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                appData = JSON.parse(e.target.result);
+                saveLocalStorageData();
+                showToast('Data imported successfully!');
+            };
+            reader.readAsText(event.target.files[0]);
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast-msg');
+            document.getElementById('toast-text').innerText = message;
+            toast.classList.add('active');
+            setTimeout(() => toast.classList.remove('active'), 3500);
+        }
+    </script>
+</body>
+</html>

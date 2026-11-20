@@ -540,8 +540,69 @@
         }
     </style>
 </head>
-<body>
+<body>Code 
 
+<!-- Supabase Auth Gate Overlay -->
+<div id="lychord-auth-gate" style="position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,0.94);backdrop-filter:blur(6px);padding:16px;">
+  <div style="width:100%;max-width:400px;background:#1e293b;border:1px solid #334155;border-radius:14px;padding:24px;color:#f8fafc;box-shadow:0 20px 50px rgba(0,0,0,0.5);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <h2 id="auth-modal-title" style="margin:0;font-size:1.25rem;font-weight:700;">LyChord Team Sign In</h2>
+      <span style="font-size:0.75rem;padding:2px 8px;border-radius:999px;background:#0f172a;color:#94a3b8;border:1px solid #334155;">Shared Library</span>
+    </div>
+    <p id="auth-modal-subtitle" style="margin:0 0 18px;font-size:0.875rem;color:#94a3b8;">
+      Sign in to access the team song library and setlists.
+    </p>
+
+    <form id="lychord-auth-form" onsubmit="handleAuthFormSubmit(event)" style="display:flex;flex-direction:column;gap:12px;">
+      <div>
+        <label for="lychord-auth-email" style="display:block;font-size:0.8rem;color:#cbd5e1;margin-bottom:4px;">Email</label>
+        <input
+          id="lychord-auth-email"
+          type="email"
+          required
+          autocomplete="email"
+          placeholder="you@example.com"
+          style="width:100%;box-sizing:border-box;padding:10px 12px;border-radius:8px;border:1px solid #475569;background:#0f172a;color:#f8fafc;font-size:0.95rem;"
+        />
+      </div>
+
+      <div>
+        <label for="lychord-auth-password" style="display:block;font-size:0.8rem;color:#cbd5e1;margin-bottom:4px;">Password</label>
+        <input
+          id="lychord-auth-password"
+          type="password"
+          required
+          minlength="6"
+          autocomplete="current-password"
+          placeholder="At least 6 characters"
+          style="width:100%;box-sizing:border-box;padding:10px 12px;border-radius:8px;border:1px solid #475569;background:#0f172a;color:#f8fafc;font-size:0.95rem;"
+        />
+      </div>
+
+      <p id="lychord-auth-error" style="display:none;margin:0;font-size:0.82rem;color:#f87171;"></p>
+
+      <button
+        id="lychord-auth-submit-btn"
+        type="submit"
+        style="margin-top:4px;padding:10px 14px;border:none;border-radius:8px;background:#2563eb;color:#ffffff;font-weight:600;font-size:0.95rem;cursor:pointer;"
+      >
+        Sign In
+      </button>
+    </form>
+
+    <div style="margin-top:14px;text-align:center;font-size:0.84rem;color:#94a3b8;">
+      <span id="lychord-auth-toggle-text">New to the team?</span>
+      <button
+        type="button"
+        onclick="toggleAuthMode()"
+        id="lychord-auth-toggle-btn"
+        style="background:none;border:none;color:#60a5fa;font-weight:600;cursor:pointer;text-decoration:underline;padding:0 4px;"
+      >
+        Create an account
+      </button>
+    </div>
+  </div>
+</div>
     <!-- Header Navigation -->
     <header>
         <div class="logo">
@@ -1617,8 +1678,167 @@ async function initSession() {
   }
   return currentUser;
 }
-
+        
 function canModify(record) {
+  if (!currentUser || !record) return false;
+  return record.created_by === currentUser.id || currentRole === 'admin';
+}
+
+// --- AUTH UI & SESSION CONTROLLER ---
+let isSignUpMode = false;
+
+function setAuthError(message = '') {
+  const errEl = document.getElementById('lychord-auth-error');
+  if (!errEl) return;
+  if (message) {
+    errEl.textContent = message;
+    errEl.style.display = 'block';
+  } else {
+    errEl.textContent = '';
+    errEl.style.display = 'none';
+  }
+}
+
+function toggleAuthMode() {
+  isSignUpMode = !isSignUpMode;
+  setAuthError('');
+
+  const title = document.getElementById('auth-modal-title');
+  const subtitle = document.getElementById('auth-modal-subtitle');
+  const submitBtn = document.getElementById('lychord-auth-submit-btn');
+  const toggleText = document.getElementById('lychord-auth-toggle-text');
+  const toggleBtn = document.getElementById('lychord-auth-toggle-btn');
+  const pwInput = document.getElementById('lychord-auth-password');
+
+  if (isSignUpMode) {
+    title.textContent = 'Create LyChord Account';
+    subtitle.textContent = 'Sign up to view, add, and manage team songs and setlists.';
+    submitBtn.textContent = 'Sign Up';
+    toggleText.textContent = 'Already have an account?';
+    toggleBtn.textContent = 'Sign In';
+    pwInput.setAttribute('autocomplete', 'new-password');
+  } else {
+    title.textContent = 'LyChord Team Sign In';
+    subtitle.textContent = 'Sign in to access the team song library and setlists.';
+    submitBtn.textContent = 'Sign In';
+    toggleText.textContent = 'New to the team?';
+    toggleBtn.textContent = 'Create an account';
+    pwInput.setAttribute('autocomplete', 'current-password');
+  }
+}
+
+async function handleAuthFormSubmit(event) {
+  event.preventDefault();
+  setAuthError('');
+
+  const email = document.getElementById('lychord-auth-email').value.trim();
+  const password = document.getElementById('lychord-auth-password').value;
+  const submitBtn = document.getElementById('lychord-auth-submit-btn');
+
+  submitBtn.disabled = true;
+  const originalLabel = submitBtn.textContent;
+  submitBtn.textContent = isSignUpMode ? 'Creating account...' : 'Signing in...';
+
+  try {
+    if (isSignUpMode) {
+      await signUp(email, password);
+      // If email confirmation is off, session is active right away; otherwise sign in explicitly
+      await initSession();
+      if (!currentUser) {
+        await signIn(email, password);
+      }
+    } else {
+      await signIn(email, password);
+    }
+
+    await initSession();
+    await updateAuthUI();
+    if (typeof showToast === 'function') {
+      showToast(`Signed in as ${currentUser.email}`);
+    }
+  } catch (err) {
+    setAuthError(err.message || 'Authentication failed.');
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalLabel;
+  }
+}
+
+async function handleLogoutClick() {
+  try {
+    await signOut();
+    await updateAuthUI();
+    if (typeof showToast === 'function') {
+      showToast('Signed out');
+    }
+  } catch (err) {
+    alert('Error signing out: ' + err.message);
+  }
+}
+
+function renderUserBadge() {
+  let badge = document.getElementById('lychord-user-badge');
+  if (!badge) {
+    badge = document.createElement('div');
+    badge.id = 'lychord-user-badge';
+    badge.style.cssText = 'position:fixed;bottom:14px;right:14px;z-index:900;display:none;align-items:center;gap:8px;background:#1e293b;color:#f8fafc;border:1px solid #334155;padding:6px 12px;border-radius:999px;font-size:0.78rem;box-shadow:0 8px 20px rgba(0,0,0,0.35);';
+    document.body.appendChild(badge);
+  }
+
+  if (!currentUser) {
+    badge.style.display = 'none';
+    return;
+  }
+
+  const roleLabel = currentRole === 'admin' ? 'ADMIN' : 'MEMBER';
+  badge.style.display = 'flex';
+  badge.innerHTML = `
+    <span style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${currentUser.email}</span>
+    <span style="padding:1px 6px;border-radius:999px;background:#0f172a;color:#60a5fa;font-weight:700;font-size:0.68rem;">${roleLabel}</span>
+    <button
+      type="button"
+      onclick="handleLogoutClick()"
+      style="background:#334155;color:#f8fafc;border:none;border-radius:999px;padding:3px 9px;font-size:0.72rem;cursor:pointer;"
+    >
+      Sign Out
+    </button>
+  `;
+}
+
+async function updateAuthUI() {
+  const gate = document.getElementById('lychord-auth-gate');
+  renderUserBadge();
+
+  if (!currentUser) {
+    if (gate) gate.style.display = 'flex';
+    return;
+  }
+
+  if (gate) gate.style.display = 'none';
+
+  // Pull latest shared songs & setlists from Supabase into appData if present
+  try {
+    const [dbSongs, dbSetlists] = await Promise.all([fetchSongs(), fetchSetlists()]);
+    if (typeof appData === 'object' && appData !== null) {
+      appData.songs = dbSongs || [];
+      appData.setlists = dbSetlists || [];
+      if (typeof saveLocalStorageData === 'function') {
+        saveLocalStorageData();
+      }
+    }
+    if (typeof renderSongs === 'function') renderSongs();
+    if (typeof renderSetlists === 'function') renderSetlists();
+  } catch (err) {
+    console.error('Failed to sync from Supabase:', err.message);
+  }
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  await initSession();
+  await updateAuthUI();
+});
+
+{
   if (!currentUser || !record) return false;
   return record.created_by === currentUser.id || currentRole === 'admin';
 }
